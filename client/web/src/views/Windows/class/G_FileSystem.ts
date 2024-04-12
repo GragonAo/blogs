@@ -1,4 +1,5 @@
-class G_FileSystem {
+export default class G_FileSystem {
+    public checkAndCleanUpUnusedFiles(): void {
 
+    }
 }
-export default G_FileSystem;

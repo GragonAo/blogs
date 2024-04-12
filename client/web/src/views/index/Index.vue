@@ -42,11 +42,7 @@
 </template>
 
 <script setup lang='ts'>
-import Http from '@/G_FrameWork/Net/Http';
 import Page_Header from './components/Page_Header.vue';
-import SingletonFactory from '@/G_FrameWork/SingletonFactory'
-import type { User } from '@/utils/types/User';
-import WebSocketClient from '@/G_FrameWork/Net/WebSocket';
 </script>
 
 <style scoped></style>

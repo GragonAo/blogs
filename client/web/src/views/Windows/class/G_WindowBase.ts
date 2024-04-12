@@ -1,6 +1,3 @@
-import SingletonFactory from "@/G_FrameWork/SingletonFactory";
-import WindowSystem from "./WindowSystem";
-
 export interface G_IWindow {
     /**
      * 打开窗口
@@ -21,42 +18,60 @@ export interface G_IWindow {
 }
 
 export abstract class G_WindowBase implements G_IWindow {
-    private id: number;
-    private updata_time: number;
+    protected id: number;
+    private updateTime: number;
     private title: string;
     private isOpen: boolean;
     private top: number;
     private left: number;
 
-    public Get_IsOpen() { return this.isOpen; }
-    public Get_Title() { return this.title; }
-    public Get_Top() { return this.top; }
-    public Get_Left() { return this.left; }
-    public Set_Top(top: number) { this.top = top; }
-    public Set_Left(left: number) { this.left = left; }
+    public get IsOpen(): boolean { return this.isOpen; }
+    public get Title(): string { return this.title; }
+    public get Top(): number { return this.top; }
+    public get Left(): number { return this.left; }
 
-    constructor(title: string, top: number, left: number) {
-        this.id = 0;
+    public set Title(value: string) { this.title = value; }
+    public set Top(value: number) { this.top = value; }
+    public set Left(value: number) { this.left = value; }
+
+    protected constructor(id: number, title: string, top: number, left: number) {
+        this.id = id;
         this.title = title;
         this.isOpen = false;
         this.top = top;
         this.left = left;
-        this.updata_time = new Date().getTime();
-        SingletonFactory.getInstance(WindowSystem).addWindow(this);
-        this.init();
+        this.updateTime = new Date().getTime();
+    }
+    // 静态工厂方法，用于创建实例
+    protected static createInstance<T extends G_WindowBase>(
+        this: new (id: number, title: string, top: number, left: number) => T,
+        id: number,
+        title: string,
+        top: number,
+        left: number
+    ): T {
+        return new this(id, title, top, left);
     }
     public abstract init(): void;
-    destroyWindow(): void {
+    public destroyWindow(): void {
         this.closeWindow();
-        //TODO 销毁的事情 例如卸载什么。。
+        // TODO: 在这里添加具体的销毁逻辑，例如解除事件监听、清理资源等。
+        console.log(`Window ${this.id} is being destroyed.`);
     }
-    getUpdateTime(): number {
-        return this.updata_time;
+    public getUpdateTime(): number {
+        return this.updateTime;
     }
-    openWindow(): void {
+    public getWindowId(): number {
+        return this.id;
+    }
+    public openWindow(): void {
+        console.log(`Window ${this.id} is being open.`);
         this.isOpen = true;
+        this.updateTime = new Date().getTime(); // 更新时间戳为当前时间
     }
-    closeWindow(): void {
+    public closeWindow(): void {
+        console.log(`Window ${this.id} is being close.`);
         this.isOpen = false;
+        this.updateTime = new Date().getTime(); // 更新时间戳为当前时间
     }
 }

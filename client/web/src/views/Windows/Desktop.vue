@@ -6,22 +6,33 @@
 </template>
 
 <script setup lang="ts">
-import WindowManger from './WindowManger.vue'
+import WindowManger from './WindowManger.vue';
+import { onMounted, onUnmounted, ref } from 'vue';
+import G_DesktopSystem from './class/G_DesktopSystem';
+
+const desktopSystem = ref(new G_DesktopSystem());
+
+onMounted(() => {
+    desktopSystem.value.start();
+});
+
+onUnmounted(() => {
+    desktopSystem.value.stop();
+});  
 </script>
 
 <style scoped>
 .desktop {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    width: 100vw;
-    background-image: "src/assets/imgs/DoesktopBg.jpg";
-    /* 桌面背景色 */
-    overflow: hidden;
-    /* 隐藏超出视口的内容 */
-    position: relative;
-    /* 为了子窗口定位 */
+    width: 99vw;
+    /* 使用视口宽度作为宽度 */
+    height: 98vh;
+    /* 使用视口高度作为高度 */
+    background-image: url("/Users/gragon/Projects/Web/DjangoWeb/blogs/client/web/src/assets/imgs/DoesktopBg.jpg");
+    background-size: cover;
+    /* 图片覆盖整个容器 */
+    background-position: center;
+    /* 图片居中 */
+    box-shadow: inset 0 0 100px rgba(90, 51, 51, 0.1);
+    /* 内阴影效果 */
 }
 </style>

@@ -5,7 +5,7 @@
             <button @click="closeWindow">关闭</button>
         </div>
         <div class="window-content">
-            窗口内容
+            <MonacoEditor :codeEditBoxName="codeEditBoxId"></MonacoEditor>
         </div>
     </div>
 </template>
@@ -15,6 +15,7 @@ import { ref, onMounted, onUnmounted, defineProps, defineEmits, computed } from 
 import { G_WindowNormal } from './class/G_WindowNormal';
 import G_WindowSystem from './class/G_WindowSystem';
 import SingletonFactory from '@/G_FrameWork/SingletonFactory';
+import MonacoEditor from '@/components/editor/MonacoEditor.vue'
 const props = defineProps({
     windowId: Number,
     title: String,
@@ -46,6 +47,10 @@ const left = computed({
     set(value) {
         emit('update:left', value);
     }
+});
+
+const codeEditBoxId = computed(() => {
+    return "codeEditBox" + windowRef.value?.getWindowId();
 });
 
 const startDrag = (event: MouseEvent) => {
@@ -117,7 +122,7 @@ onUnmounted(() => {
 
 .window-content {
     padding: 10px;
-    width: 400px;
-    height: 300px;
+    width: 700px;
+    height: 600px;
 }
 </style>

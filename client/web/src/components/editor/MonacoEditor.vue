@@ -11,7 +11,7 @@
         </el-row>
         <el-row>
             <el-col :span="24">
-                <div class="codeEditBox" :style="{ height: '400px' }"></div>
+                <div :class="props.codeEditBoxName" :style="{ height: '400px' }"></div>
             </el-col>
         </el-row>
     </el-card>
@@ -22,11 +22,15 @@ import * as monaco from 'monaco-editor'
 import { CodeEditor } from '@/utils/Code_Editor';
 import { nextTick, ref, onBeforeUnmount, computed } from 'vue'
 const text = ref('')
-defineProps({
+const props = defineProps({
     textValue: {
         type: String,
         default: '',
     },
+    codeEditBoxName: {
+        type: String,
+        default: 'codeEditBox'
+    }
 })
 const emits = defineEmits(['update:textValue'])
 let editor: monaco.editor.IStandaloneCodeEditor | null;
@@ -35,7 +39,7 @@ code.initLanguage();
 const editorInit = () => {
     nextTick(() => {
         text.value = code.LanguageOptions[0].code;
-        !editor ? (editor = monaco.editor.create(document.querySelector('.codeEditBox') as HTMLElement, {
+        !editor ? (editor = monaco.editor.create(document.querySelector('.' + props.codeEditBoxName) as HTMLElement, {
             value: text.value, // 编辑器初始显示文字
             language: 'cpp', // 语言支持自行查阅demo
             automaticLayout: false, // 自适应布局

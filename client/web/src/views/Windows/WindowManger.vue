@@ -17,18 +17,14 @@ import G_WindowSystem, { type WindowClass } from './class/G_WindowSystem';
 import SingletonFactory from '@/G_FrameWork/SingletonFactory';
 import { G_WindowNormal } from './class/G_WindowNormal';
 import type { G_WindowBase } from './class/G_WindowBase';
-
 const windowSystem = ref<G_WindowSystem | null>(null);
 const windows = ref<G_WindowBase[]>([]);
-const initializeWindowSystem = () => {
-    windowSystem.value = SingletonFactory.getInstance(G_WindowSystem);
-};
 const updateWindows = () => {
     if (!windowSystem.value) return;
     windows.value = windowSystem.value.getWindowList();
 };
 onMounted(() => {
-    initializeWindowSystem();
+    windowSystem.value = SingletonFactory.getInstance(G_WindowSystem);
     updateWindows();
 });
 const openNewWindow = () => {
@@ -68,9 +64,7 @@ defineExpose({
     openNewWindow,
     closeWindow,
 });
-
 </script>
-
 
 <style scoped>
 .window-container {

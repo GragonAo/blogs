@@ -6,7 +6,10 @@
                 @op:close="closeWindow(window.getWindowId())" @op:destroy="destroyWindow(window.getWindowId())"
                 @update:top="onWindowTopUpdate(index, $event)" @update:left="onWindowLeftUpdate(index, $event)" />
         </div>
-        <button @click="openNewWindow">打开新窗口</button>
+
+        <el-button class="editorIcon" @dblclick="openNewWindow">
+            <span class="editor-text">编辑器</span>
+        </el-button>
     </div>
 </template>
 
@@ -29,7 +32,7 @@ onMounted(() => {
 });
 const openNewWindow = () => {
     if (!windowSystem.value) return;
-    const id = windowSystem.value.addWindow(G_WindowNormal as unknown as WindowClass<G_WindowBase>, "New Window", 100, 100);
+    const id = windowSystem.value.addWindow(G_WindowNormal as unknown as WindowClass<G_WindowBase>, "G_Editor", 50, 180);
     if (id !== -1) {
         updateWindows();
         windowSystem.value.openWindow(id);
@@ -69,5 +72,64 @@ defineExpose({
 <style scoped>
 .window-container {
     position: absolute;
+}
+
+.editorIcon {
+    position: relative;
+    /* 为子元素提供定位上下文 */
+    width: 66px;
+    height: 88px;
+    /* 假设您想要给文字留下一些空间 */
+    cursor: pointer;
+    border-radius: 10px;
+    overflow: hidden;
+    /* 确保子元素不会溢出按钮 */
+}
+
+.editorIcon {
+    position: relative;
+    width: 66px;
+    height: 66px;
+    background-image: url('/Users/gragon/Projects/Web/DjangoWeb/blogs/client/web/src/assets/imgs/icon_Editor.png');
+    /* 使用正确的图片路径 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    border: none;
+    /* 确保没有边框 */
+    /* 移除可能的边框和底色 */
+    border-radius: 0;
+    box-shadow: none;
+    background-color: transparent;
+    /* 确保背景透明 */
+    border-radius: 10px;
+}
+
+.editor-text {
+    position: absolute;
+    bottom: 0;
+    /* 文字显示在图标下方 */
+    left: 0;
+    right: 0;
+    padding: 5px;
+    /* 为文字添加一些内边距 */
+    color: #fff;
+    /* 设置文字颜色，确保与背景图片对比度高 */
+    text-align: center;
+    /* 文字居中 */
+    opacity: 0;
+    /* 初始时不显示文字 */
+    transition: opacity 0.3s ease;
+    /* 添加过渡效果 */
+    pointer-events: none;
+    /* 防止文字干扰鼠标事件 */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 可选：半透明背景，帮助文字在图片上可见 */
+}
+
+.editorIcon:hover .editor-text {
+    opacity: 1;
+    /* 鼠标悬停时显示文字 */
 }
 </style>

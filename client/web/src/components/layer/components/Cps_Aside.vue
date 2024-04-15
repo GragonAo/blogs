@@ -14,8 +14,7 @@
             </template>
             <el-menu-item-group>
                 <template #title><span>Group One</span></template>
-                <el-menu-item index="1-1">item one</el-menu-item>
-                <el-menu-item index="1-2">item two</el-menu-item>
+                <el-menu-item index="1-1" @click="handleRoute('study')"> Study </el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group title="Group Two">
                 <el-menu-item index="1-3">item three</el-menu-item>
@@ -52,13 +51,18 @@ import {
     Location,
     Setting,
 } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter();
 const isCollapse = ref(true)
 const handleOpen = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
 }
 const handleClose = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
+}
+const handleRoute = (routeName: string) => {
+    router.push({ name: routeName }) // 假设您使用的是命名路由  
 }
 </script>
 

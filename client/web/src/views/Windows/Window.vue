@@ -123,6 +123,6 @@ onUnmounted(() => {
 .window-content {
     padding: 10px;
     width: 700px;
-    height: 600px;
+    height: 500px;
 }
 </style>

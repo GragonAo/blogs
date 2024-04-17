@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
 import pymysql
@@ -44,7 +45,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken', #JWT
     'corsheaders', #跨域
     'apps.users',
-    'apps.articles'
+    'apps.articles',
+    'apps.files'
 ]
 
 MIDDLEWARE = [
@@ -172,5 +174,13 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 #设置文件上传的保存路径
-MEDIA_URL = BASE_DIR/'file/image'
-MEDIA_URL = 'file/image/'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
+
+# URL to serve static files
+STATIC_URL = '/static/'
+
+# Additional locations of static files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]

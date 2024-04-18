@@ -1,57 +1,74 @@
 <template>
-    <div aria-label="A complete example of page header">
-        <el-page-header @back="onBack">
-            <template #breadcrumb>
-                <el-breadcrumb separator="/">
-                    <el-breadcrumb-item :to="{ path: './page-header.html' }">
-                        homepage
-                    </el-breadcrumb-item>
-                    <el-breadcrumb-item><a href="./page-header.html">route 1</a></el-breadcrumb-item>
-                    <el-breadcrumb-item>route 2</el-breadcrumb-item>
-                </el-breadcrumb>
-            </template>
-            <template #content>
-                <div class="flex items-center">
-                    <el-avatar class="mr-3" :size="32"
-                        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
-                    <span class="text-large font-600 mr-3"> Title </span>
-                    <span class="text-sm mr-2" style="color: var(--el-text-color-regular)">
-                        Sub title
-                    </span>
-                    <el-tag>Default</el-tag>
-                </div>
-            </template>
-            <template #extra>
-                <div class="flex items-center">
-                    <el-button>Print</el-button>
-                    <el-button type="primary" class="ml-2">Edit</el-button>
-                </div>
-            </template>
-
-            <el-descriptions :column="3" size="small" class="mt-4">
-                <el-descriptions-item label="Username">kooriookami</el-descriptions-item>
-                <el-descriptions-item label="Telephone">18100000000</el-descriptions-item>
-                <el-descriptions-item label="Place">Suzhou</el-descriptions-item>
-                <el-descriptions-item label="Remarks">
-                    <el-tag size="small">School</el-tag>
-                </el-descriptions-item>
-                <el-descriptions-item label="Address">No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu
-                    Province
-                </el-descriptions-item>
-            </el-descriptions>
-            <p class="mt-4 text-sm">
-                Element Plus team uses <b>weekly</b> release strategy under normal
-                circumstance, but critical bug fixes would require hotfix so the actual
-                release number <b>could be</b> more than 1 per week.
-            </p>
-        </el-page-header>
+    <div class="page-header">
+        <el-row class="header-row">
+            <el-col :span="3" class="avatar-col">
+                <el-image class="avatar-image" :src="userStores.userLoginInfo?.avatar" :zoom-rate="1.2" :max-scale="7"
+                    :min-scale="0.2" :initial-index="4" fit="cover" />
+            </el-col>
+            <el-col :span="20" class="info-cols">
+                <el-descriptions class="margin-top" :title="userStores.userLoginInfo?.username" :column="2" size="80px"
+                    style="margin-top: 20px;">
+                    <el-descriptions-item label="Email">{{ userStores.userLoginInfo?.email }}</el-descriptions-item>
+                    <el-descriptions-item label="Telephone">{{ userStores.userLoginInfo?.mobile
+                        }}</el-descriptions-item>
+                    <el-descriptions-item label="Place">Suzhou</el-descriptions-item>
+                    <el-descriptions-item label="Remarks">
+                        <el-tag size="small">School</el-tag>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="Address">
+                        No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu Province
+                    </el-descriptions-item>
+                </el-descriptions>
+            </el-col>
+        </el-row>
+        <p class="mt-4 text-sm">
+            我是 黄可钊 我又是 朱必利
+        </p>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ElNotification as notify } from 'element-plus'
-
-const onBack = () => {
-    notify('Back')
-}
+import { useUserStore } from '@/stores/User'
+const userStores = useUserStore();
 </script>
+<style scoped>
+.page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* 添加其他全局样式 */
+}
+
+.avatar-col {
+    margin-top: 20px;
+    /* 头像列样式 */
+}
+
+.avatar-image {
+    border-radius: 15px;
+    /* 添加其他图片样式 */
+}
+
+.info-cols {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.info-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 添加列样式 */
+}
+
+.cell-item {
+    display: flex;
+    align-items: center;
+}
+
+.margin-top {
+    margin-top: 20px;
+}
+</style>

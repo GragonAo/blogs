@@ -5,56 +5,53 @@
     </el-radio-group>
     <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
         @close="handleClose">
-        <el-sub-menu index="1">
-            <template #title>
-                <el-icon>
-                    <location />
-                </el-icon>
-                <span>Navigator One</span>
-            </template>
-            <el-menu-item-group>
-                <template #title><span>Group One</span></template>
-                <el-menu-item index="1-1" @click="handleRoute('study')"> Study </el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="Group Two">
-                <el-menu-item index="1-3">item three</el-menu-item>
-            </el-menu-item-group>
-            <el-sub-menu index="1-4">
-                <template #title><span>item four</span></template>
-                <el-menu-item index="1-4-1">item one</el-menu-item>
-            </el-sub-menu>
-        </el-sub-menu>
-        <el-menu-item index="2">
+        <el-menu-item v-for="(item, index) in CurNavigation" :key="index" index="index"
+            @click="handleRoute(item.path_name)">
             <el-icon><icon-menu /></el-icon>
-            <template #title>Navigator Two</template>
-        </el-menu-item>
-        <el-menu-item index="3" disabled>
-            <el-icon>
-                <document />
-            </el-icon>
-            <template #title>Navigator Three</template>
-        </el-menu-item>
-        <el-menu-item index="4">
-            <el-icon>
-                <setting />
-            </el-icon>
-            <template #title>Navigator Four</template>
+            <template #title>{{ item.to_name }}</template>
         </el-menu-item>
     </el-menu>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref, watch, type ComputedRef } from 'vue'
 import {
     Document,
     Menu as IconMenu,
     Location,
     Setting,
 } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
-
+import { useRouter, type RouteRecordName } from 'vue-router'
 const router = useRouter();
-const isCollapse = ref(true)
+const isCollapse = ref(true);
+type NavigationObject = {
+    root_name: string;
+    nav: { to_name: string, path_name: string }[];
+};
+const navigations = ref<NavigationObject[]>([
+    {
+        root_name: "myInterface", nav: [
+            { to_name: "我的主页", path_name: "myInterface" },
+            { to_name: "首页", path_name: "index" },
+            { to_name: "首页", path_name: "index" },
+            { to_name: "首页", path_name: "index" },
+            { to_name: "首页", path_name: "index" },
+        ]
+    },
+    { root_name: "index", nav: [{ to_name: "首页", path_name: "index" }] },
+]);
+const cur_name = ref(router.currentRoute.value.name);
+// 监听路由变化  
+watch(
+    () => router.currentRoute.value.name, // 监听 route.name 的变化  
+    (newName) => {
+        cur_name.value = newName; // 当路由名称变化时，更新 cur_name  
+    },
+    { immediate: true } // 立即执行一次回调函数，以获取初始的路由名称  
+);
+const CurNavigation: ComputedRef<{ to_name: string, path_name: string }[] | undefined> = computed(() => {
+    return navigations.value.find((nav: { root_name: RouteRecordName | null | undefined; }) => nav.root_name === cur_name.value)?.nav;
+});
 const handleOpen = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
 }
@@ -62,7 +59,8 @@ const handleClose = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
 }
 const handleRoute = (routeName: string) => {
-    router.push({ name: routeName }) // 假设您使用的是命名路由  
+    console.log(routeName)
+    router.push({ name: routeName })
 }
 </script>
 

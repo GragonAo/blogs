@@ -5,6 +5,7 @@ export type UserRegister = {
     email: string,
     mobile?: number,
     avatar?: string
+    verificatory?: number
 }
 export type ResponseUserLogin = {
     token: string,

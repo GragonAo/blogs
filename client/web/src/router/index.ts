@@ -5,6 +5,7 @@ import study from '@/views/study/study.vue';
 import articleDetail from '@/views/articleDetail/articleDetail.vue';
 import cloudDesktop from '@/views/Windows/cloudDesktop.vue'
 import loginModal from '@/components/loginModal/loginModal.vue'
+import registerModal from '@/components/loginModal/registerModal.vue'
 import { createRouter, createWebHistory } from 'vue-router';
 import Test from '@/views/test/Test.vue';
 import useUserStore from '@/stores/User';
@@ -44,6 +45,11 @@ const router = createRouter({
           path: '/login',
           name: 'login',
           component: loginModal
+        },
+        {
+          path: '/register',
+          name: 'register',
+          component: registerModal
         }
         // ... 其他子路由，例如其他页面组件  
       ]

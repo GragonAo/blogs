@@ -1,20 +1,4 @@
 <template>
-    <!-- <el-dialog v-model="visible" title="登录" width="500" close-on-press-escape="false" close-on-click-modal="false"
-        show-close="false">
-        <el-form :model="form">
-            <el-form-item label="用户名" :label-width="formLabelWidth">
-                <el-input v-model="form.username" autocomplete="off" />
-            </el-form-item>
-            <el-form-item label="密码" :label-width="formLabelWidth">
-                <el-input v-model="form.password" autocomplete="off" show-password="true" />
-            </el-form-item>
-        </el-form>
-        <template #footer>
-            <div class="dialog-footer">
-
-            </div>
-        </template>
-</el-dialog> -->
     <div class="login-container" v-if="visible">
         <div class="login-dialog">
             <h2>登录</h2>
@@ -27,7 +11,10 @@
                 </el-form-item>
             </el-form>
             <el-button type="primary" @click="submitForm">
-                Confirm
+                登录
+            </el-button>
+            <el-button type="primary" @click="register">
+                立即注册
             </el-button>
         </div>
     </div>
@@ -61,7 +48,6 @@ const closeModal = () => {
     };
     // emit('login-cancel'); 如果父组件需要知道这个事件，可以取消注释  
 };
-
 const submitForm = async () => {
     const result = await LoginUserAPI(form.value.username, form.value.password);
     console.log(result)
@@ -79,6 +65,9 @@ const submitForm = async () => {
         //密码错误等处理
     }
 };
+const register = () => {
+    router.push({ name: 'register' });
+}
 onMounted(() => {
     visible.value = true;
 });

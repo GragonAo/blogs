@@ -62,9 +62,13 @@ declare module 'vue' {
     LoginModal: typeof import('./src/components/loginModal/loginModal.vue')['default']
     MarkdownEditor: typeof import('./src/components/editor/MarkdownEditor.vue')['default']
     MonacoEditor: typeof import('./src/components/editor/MonacoEditor.vue')['default']
+    RegisterModal: typeof import('./src/components/loginModal/registerModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

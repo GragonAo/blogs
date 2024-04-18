@@ -1,28 +1,49 @@
 <template>
-    <el-dialog v-model="visible" title="登录" width="350" class="login">
-        <el-form :model="form" ref="form" label-width="80px">
-            <el-form-item label="用户名">
-                <el-input v-model="form.username"></el-input>
+    <!-- <el-dialog v-model="visible" title="登录" width="500" close-on-press-escape="false" close-on-click-modal="false"
+        show-close="false">
+        <el-form :model="form">
+            <el-form-item label="用户名" :label-width="formLabelWidth">
+                <el-input v-model="form.username" autocomplete="off" />
             </el-form-item>
-            <el-form-item label="密码">
-                <el-input type="password" v-model="form.password"></el-input>
+            <el-form-item label="密码" :label-width="formLabelWidth">
+                <el-input v-model="form.password" autocomplete="off" show-password="true" />
             </el-form-item>
         </el-form>
         <template #footer>
             <div class="dialog-footer">
-                <el-button @click="closeModal">Cancel</el-button>
-                <el-button type="primary" @click="submitForm">
-                    Confirm
-                </el-button>
+
             </div>
         </template>
-    </el-dialog>
-
+</el-dialog> -->
+    <div class="login-container" v-if="visible">
+        <div class="login-dialog">
+            <h2>登录</h2>
+            <el-form :model="form">
+                <el-form-item label="用户名" :label-width="formLabelWidth">
+                    <el-input v-model="form.username" autocomplete="off" />
+                </el-form-item>
+                <el-form-item label="密码" :label-width="formLabelWidth">
+                    <el-input v-model="form.password" autocomplete="off" show-password="true" />
+                </el-form-item>
+            </el-form>
+            <el-button type="primary" @click="submitForm">
+                Confirm
+            </el-button>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-const visible = ref(true);
+import { onMounted, ref } from 'vue';
+import { GetUserInfoAPI, LoginUserAPI } from '@/API/User';
+import { useUserStore } from '@/stores/User'
+import { useSettingsStore } from '@/stores/Settings'
+import type { UserLoginInfo } from '@/API/API_Types/User';
+import { useRouter } from 'vue-router';
+const formLabelWidth = '140px'
+const visible = ref(true); // 初始状态设为false，除非你需要默认打开对话框  
+const userStore = useUserStore();
+const router = useRouter();
 const form = ref({
     username: '',
     password: '',
@@ -38,35 +59,56 @@ const closeModal = () => {
         username: '',
         password: '',
     };
-    // emit('login-cancel');
+    // emit('login-cancel'); 如果父组件需要知道这个事件，可以取消注释  
 };
 
 const submitForm = async () => {
-    try {
-        // 发送登录请求到后端API的逻辑  
-        // const result = await login(form.value.username, form.value.password);  
-        // 根据你的后端API返回结果处理登录逻辑  
-        // 如果登录成功，则触发 'login-success' 事件  
-        // emit('login-success', result.user);  
-        // 示例：直接模拟登录成功  
-        // emit('login-success', { name: form.value.username });
+    const result = await LoginUserAPI(form.value.username, form.value.password);
+    console.log(result)
+    if (result!.code >= 200 && result!.code < 300)
+        userStore.setUserInfo(result!.data as UserLoginInfo);
+    const info = await GetUserInfoAPI(userStore.userLoginInfo!.id);
+    console.log(info);
+    if (info!.code >= 200 && info!.code < 300) {
+        useUserStore().setUserInfo(info!.data as UserLoginInfo);
         closeModal();
-    } catch (error) {
-        // 处理登录失败的情况  
-        console.error('登录失败:', error);
-        // 这里可以选择显示错误信息给用户  
-        // 或者触发一个 'login-error' 事件  
-        // 例如：ElMessageBox.alert('登录失败: ' + error.message);  
+        router.push({ path: useSettingsStore().settings?.redirectPath });
+    }
+
+    else {
+        //密码错误等处理
     }
 };
-
+onMounted(() => {
+    visible.value = true;
+});
+// 如果父组件需要调用showModal方法，可以通过defineExpose暴露这个方法  
 defineExpose({
     showModal,
 });  
 </script>
 
 <style scoped>
-.login {
-    border-radius: 10px;
+.login-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.login-dialog {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    max-width: 400px;
+    pointer-events: auto;
 }
 </style>

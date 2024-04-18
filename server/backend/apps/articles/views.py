@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import action, permission_classes
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -26,15 +27,18 @@ class ArticleViewSet(ModelViewSet):
 
     @permission_classes([IsAuthenticated, UserPermissions])
     def create(self, request, *args, **kwargs):
-        ser = self.get_serializer(data=request.data)
-        ser.is_valid(raise_exception=True)
-        # 获取当前登录用户
-        user = request.user
-        # 创建文章实例，并将用户关联到文章
-        ser.save(user=user)
-        headers = self.get_success_headers(ser.data)
-        return Response(ser.data, status=status.HTTP_201_CREATED, headers=headers)
-
+        try:
+            ser = self.get_serializer(data=request.data)
+            if(ser.is_valid()):
+                # 获取当前登录用户
+                user = request.user
+                # 创建文章实例，并将用户关联到文章
+                ser.save(user=user)
+                headers = self.get_success_headers(ser.data)
+                return Response(ser.data, status=status.HTTP_201_CREATED, headers=headers)
+        except ValidationError as e:
+            print(e)
+            return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
     @permission_classes([IsAuthenticated, UserPermissions])
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -55,6 +59,8 @@ class ArticleViewSet(ModelViewSet):
     @permission_classes([IsAuthenticated, UserPermissions])
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        # 在这里可以进行删除前的其他操作，如果需要的话
+        user = request.user
+        if(user.id != instance.user_id):
+            return Response('没有权限操作',status=status.HTTP_403_FORBIDDEN)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

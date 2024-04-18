@@ -7,7 +7,7 @@ from common.db import BaseModel
 
 class User(AbstractUser,BaseModel):
     mobile = models.CharField(max_length=11, unique=True)
-    avatar = models.ImageField(upload_to='avatar/', blank=True, null=True,default='static/avatar/default.jpg')
+    avatar = models.ImageField(upload_to='static/avatar/', blank=True, null=True,default='static/avatar/default.jpg')
     class Meta:
         db_table = 'users'
         verbose_name = '用户表'

@@ -141,6 +141,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ORIGIN_ALLOW_ALL = True #允许所以用户跨域访问
+# CORS_ORIGIN_WHITELIST = ['*']
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
@@ -175,8 +176,6 @@ AUTHENTICATION_BACKENDS = [
 
 #设置文件上传的保存路径
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
-
 # URL to serve static files
 STATIC_URL = '/static/'
 

@@ -27,25 +27,23 @@ class LoginBackend(ModelBackend):
 class RefreshTokenView(TokenRefreshView):
     def post(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)
-        result = Result(code=status.HTTP_401_UNAUTHORIZED)
-        if not serializer.is_valid():
-            result.message = serializer.errors
-            return Response(result.to_dict(), status=status.HTTP_401_UNAUTHORIZED)
-        result.code = status.HTTP_200_OK
-        result.data = {"token": serializer.validated_data.pop('access')}
-        return Response(result.to_dict(), status=status.HTTP_200_OK)
+        try:
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+        except:
+            return Response("刷新Token错误或过期", status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"token": serializer.validated_data.pop('access')}, status=status.HTTP_200_OK)
 
 #验证token
 class VerifyTokenView(TokenVerifyView):
     def post(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)
-        result = Result(code=status.HTTP_401_UNAUTHORIZED)
-        if not serializer.is_valid():
-            result.message = serializer.errors
-            return Response(result.to_dict(), status=status.HTTP_401_UNAUTHORIZED)
-        result.code = status.HTTP_200_OK
-        result.data = {"token": request.data["token"]}
-        return Response(result.to_dict(), status=status.HTTP_200_OK)
+        try:
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+        except:
+            return Response("Token错误或过期", status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"token": request.data["token"]}, status=status.HTTP_200_OK)
 
 #用户权限校验
 class UserPermissions(permissions.BasePermission):

@@ -23,6 +23,7 @@ class LoginView(TokenObtainPairView):
             return Response(ser.errors['non_field_errors'][0], status=status.HTTP_400_BAD_REQUEST)
         data = ser.validated_data
         data['token'] = ser.validated_data.pop('access')
+        data['id'] = ser.user.id;
         return Response(data, status=status.HTTP_200_OK)
 
 class RegisterView(APIView):

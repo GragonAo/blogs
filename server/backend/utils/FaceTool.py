@@ -1,7 +1,7 @@
 import os
 import base64
 from deepface import DeepFace
-
+import tensorflow as tf
 
 class FaceTool:
     @staticmethod
@@ -32,11 +32,26 @@ class FaceTool:
             print(f"Original file path: {original_file_path}")
             print(f"Decoded file path: {decoded_file_path}")
 
+            # 配置 TensorFlow 以防止 OOM 错误
+            gpus = tf.config.experimental.list_physical_devices('GPU')
+            if gpus:
+                try:
+                    for gpu in gpus:
+                        tf.config.experimental.set_memory_growth(gpu, True)
+                except RuntimeError as e:
+                    print(f"Memory growth setting error: {e}")
+
             # 进行人脸验证
             result = DeepFace.verify(
                 img1_path=original_file_path,
                 img2_path=decoded_file_path,
                 model_name='VGG-Face',
+                detector_backend='opencv',
+                enforce_detection=False,
+                align=True,
+                normalization='base',
+                distance_metric='cosine',
+                prog_bar=False
             )
             print(f"Verification result: {result}")
 

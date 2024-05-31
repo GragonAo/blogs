@@ -2,6 +2,7 @@ import os
 import base64
 from deepface import DeepFace
 import tensorflow as tf
+from PIL import Image
 
 class FaceTool:
     @staticmethod
@@ -20,6 +21,12 @@ class FaceTool:
         with open(decoded_file_path, 'wb') as f:
             f.write(base64.b64decode(encoded_str))
         print(f"Image saved to {decoded_file_path}")
+
+        # 降低图像大小
+        with Image.open(decoded_file_path) as img:
+            img = img.resize((224, 224), Image.Resampling.LANCZOS)
+            img.save(decoded_file_path)
+
         return decoded_file_path
 
     @staticmethod
@@ -41,17 +48,20 @@ class FaceTool:
                 except RuntimeError as e:
                     print(f"Memory growth setting error: {e}")
 
+            # 手动指定模型权重文件路径
+            model_weights_path = "/home/backend/models/facenet_weights.h5"
+
             # 进行人脸验证
             result = DeepFace.verify(
                 img1_path=original_file_path,
                 img2_path=decoded_file_path,
-                model_name='VGG-Face',
+                model_name='Facenet',
                 detector_backend='opencv',
                 enforce_detection=False,
                 align=True,
                 normalization='base',
                 distance_metric='cosine',
-                prog_bar=False
+                model_weights_path=model_weights_path
             )
             print(f"Verification result: {result}")
 

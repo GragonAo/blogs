@@ -1,13 +1,13 @@
-
 from django.urls import path
+
 from apps.users import views
-from common.authenticate import RefreshTokenView, VerifyTokenView
 
 urlpatterns = [
-    path('login/', views.LoginView.as_view()),
-    path('register/', views.RegisterView.as_view()),
-    path('token/refresh/', RefreshTokenView.as_view()),
-    path('token/verify/', VerifyTokenView.as_view()),
-    path('<int:pk>/', views.UserView.as_view({'get':'retrieve'})),
-    path('<int:pk>/avatar/upload/', views.UserView.as_view({'post': 'upload_avatar'}), name='avatar-upload')
+    path('simple/', views.simple_view),
+    path('login/', views.UsersView.login),
+    path('register/', views.UsersView.register),
+    path('userinfo/', views.UsersView.userinfo),
+    path('userProfile/', views.UsersView.userProfile),
+    path('upload/avatar/', views.UsersView.upload_avatar),
+    path('upload/face/', views.UsersView.upload_face),
 ]

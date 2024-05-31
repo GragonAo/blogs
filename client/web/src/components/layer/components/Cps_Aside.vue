@@ -1,8 +1,4 @@
 <template>
-    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-        <el-radio-button :value="false">expand</el-radio-button>
-        <el-radio-button :value="true">collapse</el-radio-button>
-    </el-radio-group>
     <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
         @close="handleClose">
         <el-menu-item v-for="(item, index) in CurNavigation" :key="index" index="index"
@@ -23,22 +19,50 @@ import {
 } from '@element-plus/icons-vue'
 import { useRouter, type RouteRecordName } from 'vue-router'
 const router = useRouter();
-const isCollapse = ref(true);
+const isCollapse = ref(false);
 type NavigationObject = {
     root_name: string;
     nav: { to_name: string, path_name: string }[];
 };
 const navigations = ref<NavigationObject[]>([
     {
+        root_name: "index", nav:
+            [
+                { to_name: "首页", path_name: "index" },
+            ]
+    },
+    {
         root_name: "myInterface", nav: [
             { to_name: "我的主页", path_name: "myInterface" },
-            { to_name: "首页", path_name: "index" },
-            { to_name: "首页", path_name: "index" },
-            { to_name: "首页", path_name: "index" },
-            { to_name: "首页", path_name: "index" },
+            { to_name: "我的文章", path_name: "myInfoPage" },
+            { to_name: "我的信息", path_name: "myUserProfile" },
+            { to_name: "隐私与安全", path_name: "mySecuritySettings" },
         ]
     },
-    { root_name: "index", nav: [{ to_name: "首页", path_name: "index" }] },
+    {
+        root_name: "myInfoPage", nav: [
+            { to_name: "我的主页", path_name: "myInterface" },
+            { to_name: "我的文章", path_name: "myInfoPage" },
+            { to_name: "我的信息", path_name: "myUserProfile" },
+            { to_name: "隐私与安全", path_name: "mySecuritySettings" },
+        ]
+    },
+    {
+        root_name: "myUserProfile", nav: [
+            { to_name: "我的主页", path_name: "myInterface" },
+            { to_name: "我的文章", path_name: "myInfoPage" },
+            { to_name: "我的信息", path_name: "myUserProfile" },
+            { to_name: "隐私与安全", path_name: "mySecuritySettings" },
+        ]
+    },
+    {
+        root_name: "mySecuritySettings", nav: [
+            { to_name: "我的主页", path_name: "myInterface" },
+            { to_name: "我的文章", path_name: "myInfoPage" },
+            { to_name: "我的信息", path_name: "myUserProfile" },
+            { to_name: "隐私与安全", path_name: "mySecuritySettings" },
+        ]
+    },
 ]);
 const cur_name = ref(router.currentRoute.value.name);
 // 监听路由变化  
@@ -68,5 +92,6 @@ const handleRoute = (routeName: string) => {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
     min-height: 400px;
+    padding-top: 30px;
 }
 </style>

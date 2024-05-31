@@ -1,8 +1,11 @@
 import Layer from '@/components/layer/Layer.vue';
 import myInterface from '@/views/myInterface/myInterface.vue';
+import mySecuritySettings from '@/views/myInterface/mySecuritySettings.vue';
+import myInfoPage from '@/views/myInterface/myInfoPage.vue';
+import myUserProfile from '@/views/myInterface/myUserProfile.vue';
 import index from '@/views/index/index.vue';
-import study from '@/views/study/study.vue';
-import articleDetail from '@/views/articleDetail/articleDetail.vue';
+import publishArticle from '@/views/articleDetail/PublishArticle/PublishArticle.vue';
+import articleDetail from '@/views/articleDetail/articlePage.vue';
 import cloudDesktop from '@/views/Windows/cloudDesktop.vue'
 import loginModal from '@/components/loginModal/loginModal.vue'
 import registerModal from '@/components/loginModal/registerModal.vue'
@@ -36,15 +39,28 @@ const router = createRouter({
           component: articleDetail // 渲染 Index 组件到 Layer 的 <router-view> 中  
         },
         {
-          path: '/study',
-          name: 'study',
-          component: study, // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          path: '/articleDetail/publishArticle',
+          name: 'publishArticle',
+          component: publishArticle,
           meta: { requiresAuth: true },
         },
         {
-          path: '/login',
-          name: 'login',
-          component: loginModal
+          path: '/myInterface/mySecuritySettings', // 当访问 '/' 时，默认渲染此组件  
+          name: 'mySecuritySettings',
+          component: mySecuritySettings, // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          meta: { requiresAuth: true },
+        },
+        {
+          path: '/myInterface/myInfoPage', // 当访问 '/' 时，默认渲染此组件  
+          name: 'myInfoPage',
+          component: myInfoPage, // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          meta: { requiresAuth: true },
+        },
+        {
+          path: '/myInterface/myUserProfile', // 当访问 '/' 时，默认渲染此组件  
+          name: 'myUserProfile',
+          component: myUserProfile, // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          meta: { requiresAuth: true },
         },
         {
           path: '/register',
@@ -65,22 +81,21 @@ const router = createRouter({
       name: 'Test',
       component: Test,
     },
-
-
+    {
+      path: '/login',
+      name: 'login',
+      component: loginModal,
+    },
   ]
 });
 router.beforeEach((to, from, next) => {
   // 检查即将进入的路由是否需要登录  
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // 检查用户是否已登录  
-    const isLoggedIn = useUserStore().userLoginInfo;
-
-    if (isLoggedIn) {
-      // 用户已登录，继续导航  
+    console.log(useUserStore().isLogin());
+    if (useUserStore().isLogin()) {
       next();
     } else {
-      // 用户未登录，显示登录弹窗  
-      console.log("未登录")
       const fullpath = to.fullPath
       let setting = useSettingsStore().settings;
       if (setting) {
@@ -89,7 +104,8 @@ router.beforeEach((to, from, next) => {
       } else {
         useSettingsStore().setSettings({ redirectPath: fullpath });
       }
-      next('/login'); // 如果未登录，重定向到登录页面  
+      useSettingsStore().setLoginDialogVisible(true);
+      next('/'); // 如果未登录，重定向到登录页面  
       // 停止当前导航  
       return;
     }

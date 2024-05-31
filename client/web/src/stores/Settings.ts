@@ -6,12 +6,14 @@ export const useSettingsStore = defineStore('settings', () => {
 
     const setSettings = (value: SettingsInfo) => {
         settings.value = value;
-        localStorage.setItem('settings', JSON.stringify(value));
     };
-
+    const setLoginDialogVisible = (value: boolean) => {
+        if (settings.value) {
+            settings.value.loginDialogVisible = value;
+        }
+    };
     const clearSettings = () => {
         settings.value = undefined;
-        localStorage.removeItem('settings');
     };
     const loadUserInfoFromBrowser = () => {
         const storedInfo = localStorage.getItem('settings');
@@ -27,6 +29,7 @@ export const useSettingsStore = defineStore('settings', () => {
         settings,
         setSettings,
         clearSettings,
+        setLoginDialogVisible
     };
 });
 
@@ -38,7 +41,8 @@ export interface SettingsStore {
 }
 
 export type SettingsInfo = {
-    redirectPath: string
+    redirectPath: string,
+    loginDialogVisible?: boolean // 控制登录弹窗的显示状态
 }
 
 export default useSettingsStore;

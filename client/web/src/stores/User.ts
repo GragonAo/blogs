@@ -1,47 +1,73 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import type { UserLoginInfo } from '@/API/API_Types/User';
+import type { ResponseUserLogin, UserInfo, UserProfile } from '@/API/API_Types/User';
 
 export const useUserStore = defineStore('user', () => {
-  const userLoginInfo = ref<UserLoginInfo | undefined>(undefined);
-
-  const setUserInfo = (value: UserLoginInfo) => {
+  const userLoginInfo = ref<UserInfo | undefined>(undefined);
+  const userProfile = ref<UserProfile | undefined>(undefined);
+  const token = ref<ResponseUserLogin | undefined>();
+  const setToken = (value: ResponseUserLogin) => {
+    token.value = value;
+    localStorage.setItem('token', JSON.stringify(value));
+  }
+  const setUserInfo = (value: UserInfo) => {
     userLoginInfo.value = value;
-    // 这里可以添加将用户信息写入浏览器的代码  
-    // 例如，写入 localStorage:  
-    localStorage.setItem('userInfo', JSON.stringify(value));
   };
-
+  const setUserProfile = (value: UserProfile) => {
+    userProfile.value = value;
+  }
+  const isLogin = () => {
+    return token.value !== undefined;
+  }
+  const logOut = () => {
+    clearToken();
+    clearUserInfo();
+    clearUserProfile();
+  }
+  const clearToken = () => {
+    token.value = undefined;
+    localStorage.removeItem('token');
+  }
   const clearUserInfo = () => {
     userLoginInfo.value = undefined;
-    // 这里可以添加清除浏览器中用户信息的代码  
-    // 例如，从 localStorage 中移除:  
-    localStorage.removeItem('userInfo');
   };
-
-  // 如果需要，可以添加一个从浏览器中读取用户信息的方法  
+  const clearUserProfile = () => {
+    userProfile.value = undefined;
+  }
   const loadUserInfoFromBrowser = () => {
-    const storedInfo = localStorage.getItem('userInfo');
+    const storedInfo = localStorage.getItem('token');
     if (storedInfo) {
-      userLoginInfo.value = JSON.parse(storedInfo);
+      token.value = JSON.parse(storedInfo);
     }
   };
 
-  // 在 store 创建时加载用户信息  
   loadUserInfoFromBrowser();
 
   return {
     userLoginInfo,
+    token,
     setUserInfo,
     clearUserInfo,
+    setToken,
+    clearToken,
+    setUserProfile,
+    isLogin,
+    logOut
   };
 });
 
 /** 用户相关信息存储器类型接口 */
 export interface UserStore {
-  userLoginInfo: UserLoginInfo | undefined;
-  setUserInfo: (val: UserLoginInfo) => void;
+  userLoginInfo: UserInfo | undefined;
+  token: ResponseUserLogin | undefined;
+  userProfile: UserProfile | undefined;
+  setUserInfo: (val: UserInfo) => void;
   clearUserInfo: () => void;
+  setToken: (val: ResponseUserLogin) => void;
+  clearToken: () => void;
+  setUserProfile: () => void;
+  isLogin: () => Boolean;
+  logOut: () => void;
 }
 
 // 导出时使用 useUserStore，这是 Pinia 的推荐做法  

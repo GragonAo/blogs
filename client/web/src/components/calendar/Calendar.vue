@@ -1,108 +1,131 @@
 <template>
-    <div class="responsive-calendar-container">
-        <table class="responsive-calendar">
-            <thead>
-                <tr>
-                    <th v-for="day in weekDays" :key="day">{{ day }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(week, index) in weeks" :key="index">
-                    <td v-for="day in week" :key="day.date" @click="handleDateClick(day)">
-                        {{ day.date.getDate() }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <el-card class="calendar-card">
+        <div class="quote">
+            <span>我们的征途是星辰大海</span>
+        </div>
+        <div class="custom-calendar">
+
+            <div class="calendar-header">
+                <span>{{ monthNames[currentMonth] }} {{ currentYear }}</span>
+            </div>
+            <div class="calendar-body">
+                <div class="calendar-day" v-for="day in previousMonthDays" :key="'prev' + day">
+                    <span class="day-text">{{ day }}</span>
+                </div>
+                <div class="calendar-day current-month" v-for="day in daysInMonth" :key="day">
+                    <span v-if="currentDay !== day" class="day-text">{{ day }}</span>
+                    <span v-else class="day-cur-ext">{{ day }}</span>
+                </div>
+                <div class="calendar-day" v-for="day in nextMonthDays" :key="'next' + day">
+                    <span class="day-text">{{ day }}</span>
+                </div>
+            </div>
+        </div>
+    </el-card>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+<script lang="ts" setup>
+import { ref, computed } from 'vue';
 
-const currentMonth = ref(new Date());
-const weekDays = ref(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
-const weeks = ref([]);
+const value = ref(new Date());
 
-const handleDateClick = (date: Date) => {
-    console.log('Date clicked:', date);
-    // 你可以在这里发出事件或者执行其他逻辑  
-};
-
-// 计算属性，用于生成日历数据  
-const computedWeeks = computed(() => {
-    const firstDay = new Date(currentMonth.value.getFullYear(), currentMonth.value.getMonth(), 1);
-    const lastDay = new Date(currentMonth.value.getFullYear(), currentMonth.value.getMonth() + 1, 0);
-
-    let date = new Date(firstDay);
-    const days: { date: Date; isCurrentMonth: boolean }[] = [];
-    let week: { date: Date; isCurrentMonth: boolean }[] = [];
-
-    while (date <= lastDay) {
-        week.push({ date, isCurrentMonth: date.getMonth() === currentMonth.value.getMonth() });
-
-        if (week.length === 7 || date.getDate() === lastDay.getDate()) {
-            days.push(...week);
-            week = [];
-        }
-
-        date.setDate(date.getDate() + 1);
-    }
-
-    return chunkArray(days, 7); // 使用chunkArray函数将数组分割成每周的数组  
+const currentYear = computed(() => value.value.getFullYear());
+const currentMonth = computed(() => value.value.getMonth());
+const daysInMonth = computed(() => {
+    return Array.from({ length: new Date(currentYear.value, currentMonth.value + 1, 0).getDate() }, (_, i) => i + 1);
+});
+const currentDay = computed(() => value.value.getDate());
+const startDayOfWeek = computed(() => {
+    return new Date(currentYear.value, currentMonth.value, 1).getDay();
 });
 
-// 辅助函数，用于将数组分割成指定大小的块  
-function chunkArray(array: any[], chunkSize: number) {
-    const result = [];
-    for (let i = 0; i < array.length; i += chunkSize) {
-        const chunk = array.slice(i, i + chunkSize);
-        result.push(chunk);
-    }
-    return result;
-}
-
-// 根据窗口大小调整日历样式（响应式逻辑）  
-function adjustCalendarStyle() {
-    const windowWidth = window.innerWidth;
-    // 这里添加你的响应式逻辑，比如改变表格的样式等  
-}
-
-onMounted(() => {
-    weeks.value = computedWeeks.value;
-    window.addEventListener('resize', adjustCalendarStyle);
-    adjustCalendarStyle();
+const previousMonthDays = computed(() => {
+    const previousMonthLastDay = new Date(currentYear.value, currentMonth.value, 0).getDate();
+    return Array.from({ length: startDayOfWeek.value }, (_, i) => previousMonthLastDay - startDayOfWeek.value + i + 1);
 });
 
-onBeforeUnmount(() => {
-    window.removeEventListener('resize', adjustCalendarStyle);
+const nextMonthDays = computed(() => {
+    const endDayOfWeek = new Date(currentYear.value, currentMonth.value + 1, 0).getDay();
+    return Array.from({ length: 6 - endDayOfWeek }, (_, i) => i + 1);
 });
+
+const monthNames = [
+    '一月', '二月', '三月', '四月', '五月', '六月',
+    '七月', '八月', '九月', '十月', '十一月', '十二月'
+];
 </script>
 
 <style scoped>
-.responsive-calendar-container {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    /* 允许水平滚动 */
+.calendar-card {
+    margin-top: 30px;
+    height: 315px;
+    border-radius: 20px;
+    background-image: url('@/assets/imgs/calendar.jpeg');
+    background-size: cover;
+    position: relative;
+    color: #fff;
 }
 
-.responsive-calendar {
-    width: 100%;
-    border-collapse: collapse;
-    user-select: none;
-    /* 禁止选择文本 */
-}
-
-.responsive-calendar th,
-.responsive-calendar td {
-    text-align: center;
-    border: 1px solid #ddd;
+.custom-calendar {
     padding: 10px;
-    /* 根据需要动态调整 */
-    cursor: pointer;
-    /* 点击效果 */
+    color: #fff;
 }
 
-/* 根据需要添加更多样式 */
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.183);
+}
+
+.current-month {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.calendar-day .day-text {
+    color: #fff;
+}
+
+.day-cur-ext {
+    color: rgb(200, 255, 0);
+}
+
+.calendar-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 0 10px;
+}
+
+.weather-info {
+    display: flex;
+    align-items: center;
+}
+
+.weather-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+}
+
+.quote {
+    font-size: 14px;
+    font-style: italic;
+}
 </style>

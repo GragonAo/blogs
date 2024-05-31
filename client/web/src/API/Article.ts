@@ -4,13 +4,13 @@ import type { Result } from './API_Types/Base'
 import type { ArticleInfo } from "./API_Types/Article";
 const http = SingletonFactory.getInstance(Http);
 export const GetArtiecleListAPI = () => {
-    return http.get<Result<ArticleInfo[]>>('api/articles/');
+    return http.get<Result<ArticleInfo[]>>('api/articles/list/');
 }
 export const GetArticleAPI = (id: number) => {
     return http.get<Result<ArticleInfo>>('api/articles/' + id);
 }
 export const CreateArticleAPI = (title: string, content: string) => {
-    return http.post<Result<ArticleInfo>>('api/articles/', { title, content });
+    return http.post<Result<ArticleInfo>>('api/articles/create/', { title, content });
 }
 export const UpdateArticleAPI = (title: string, content: string) => {
     return http.put<Result<ArticleInfo>>('api/articles/', { title, content });

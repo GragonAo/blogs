@@ -1,11 +1,12 @@
-from django.urls import include, path
-from rest_framework.routers import DefaultRouter
-from apps.articles.views import ArticleViewSet  # 确保这里导入了正确的 ArticleViewSet
+from django.urls import path
 
-router = DefaultRouter()
-router.register(r'', ArticleViewSet, basename='article')
+from apps.articles import views
 
 urlpatterns = [
-    # ... 其他 URL 配置 ...
-    path('', include(router.urls)),
+    path('list/', views.ArticlesView.list),
+    # path('<int:pk>/', views.ArticlesView.),
+    path('create/', views.ArticlesView.create),
+    path('search/', views.ArticlesView.search),
+    # path('update/', views.UsersView.userinfo),
+    # path('delete/<int:pk>/', views.UsersView.userinfo),
 ]

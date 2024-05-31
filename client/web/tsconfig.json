@@ -13,5 +13,6 @@
   ],
   "compilerOptions": {  
     "removeComments": true,  //打包时移除所有注释
-  }  
+    
+  }
 }

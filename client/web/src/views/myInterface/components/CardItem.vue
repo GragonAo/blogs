@@ -1,41 +1,55 @@
 <template>
     <div class="card-group" style="display: flex; flex-wrap: wrap;">
-        <el-card v-for="(card, index) in cards" :key="index" class="card" :style="{ width: cardWidth, }"
+        <el-card v-for="(card, index) in cards" :key="index" class="card" :style="{ width: cardWidth }"
             style="height: 200px;" @mouseover="cardHovered(index)" @mouseout="cardLeft(index)">
             <div class="card-content">
-                {{ card.content }}
+                <h3>{{ card.name }}</h3>
+                <p>{{ card.description || 'No description available' }}</p>
+                <p><strong>Language:</strong> {{ card.language || 'N/A' }}</p>
+                <a :href="card.html_url" target="_blank">View on GitHub</a>
             </div>
         </el-card>
     </div>
 </template>
 
-<script setup lang='ts'>
-import { computed, ref } from 'vue';
-// 假设的卡片数据    
-const cards = ref([
-    { content: 'Card 1 Content' },
-    { content: 'Card 2 Content' },
-    { content: 'Card 2 Content' },
-    { content: 'Card 2 Content' },
+<script setup lang="ts">
+import Http from '@/G_FrameWork/Net/Http';
+import SingletonFactory from '@/G_FrameWork/SingletonFactory';
+import { computed, ref, onMounted } from 'vue';
 
 
-    // ... 其他卡片数据  
-]);
+interface Repo {
+    name: string;
+    description: string | null;
+    html_url: string;
+    language: string | null;
+}
 
-// 计算属性：卡片的宽度  
+const cards = ref<Repo[]>([]);
+
+const fetchGitHubRepos = async () => {
+    try {
+        const response = await SingletonFactory.getInstance(Http).get('https://api.github.com/users/MyHolleworld/repos');
+        cards.value = response.data;
+        console.log(cards.value)
+    } catch (error) {
+        console.error('Error fetching GitHub repositories:', error);
+    }
+};
+
+onMounted(fetchGitHubRepos);
+
 const cardWidth = computed(() => {
     return 'calc(50% - 20px)';
 });
 
-// 计算属性：卡片的高度，保持10/15的比例  
 const cardHeight = computed(() => {
     return `calc(${cardWidth.value} * 10 / 13)`;
 });
 
-// 卡片悬停状态  
-const hoveredCard = ref(null);
+const hoveredCard = ref<number | null>(null);
 
-const cardHovered = (index) => {
+const cardHovered = (index: number) => {
     hoveredCard.value = index;
 };
 

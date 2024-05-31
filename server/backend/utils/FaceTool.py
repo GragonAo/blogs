@@ -2,6 +2,7 @@ import os
 import base64
 from deepface import DeepFace
 
+
 class FaceTool:
     @staticmethod
     def baseEncode(file_name):
@@ -27,16 +28,22 @@ class FaceTool:
         try:
             # 保存 base64 编码的图像到临时文件
             decoded_file_path = FaceTool.save_base64_image(encoded_str, 'temp_image.png')
+            # 打印调试信息
+            print(f"Original file path: {original_file_path}")
+            print(f"Decoded file path: {decoded_file_path}")
+
             # 进行人脸验证
             result = DeepFace.verify(
                 img1_path=original_file_path,
                 img2_path=decoded_file_path,
                 model_name='VGG-Face',
             )
-            return result.get('threshold', 0)
+            print(f"Verification result: {result}")
+
+            return result.get('verified', False)
         except Exception as e:
             print(f"Verification failed: {e}")
-            return 0
+            return False
         finally:
             # 删除临时文件
             if decoded_file_path and os.path.exists(decoded_file_path):

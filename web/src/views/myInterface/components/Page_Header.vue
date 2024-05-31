@@ -2,6 +2,7 @@
     <div class="page-header">
         <el-row class="header-row">
             <el-col :span="4" class="avatar-col">
+
                 <el-image class="avatar-image" :src="APP_CONFIG.baseURL + userStores.userLoginInfo?.avatar"
                     :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" fit="cover" />
                 <input ref="fileInput" type="file" accept="image/*" style="display: none;" @change="handleFileChange" />

@@ -3,7 +3,7 @@ import useUserStore from "@/stores/User";
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { APP_CONFIG } from '~/app.config';
 class Http {
-  public static baseURL = APP_CONFIG.baseURL;
+  public static baseURL = APP_CONFIG.baseURL + '/';
   private axiosInstance: AxiosInstance;
 
   constructor() {

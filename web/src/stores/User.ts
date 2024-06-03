@@ -52,7 +52,8 @@ export const useUserStore = defineStore('user', () => {
     clearToken,
     setUserProfile,
     isLogin,
-    logOut
+    logOut,
+    userProfile
   };
 });
 

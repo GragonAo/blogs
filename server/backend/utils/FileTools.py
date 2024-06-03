@@ -2,10 +2,7 @@ import hashlib
 import os
 from io import BytesIO
 from tkinter import Image
-
 from django.core.files.uploadedfile import InMemoryUploadedFile
-
-from utils.utils import json_response
 
 
 def fileVerify(field_name, upload_dir, file_data, max_size=1024 * 800, compress=False, quality=75):

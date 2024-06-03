@@ -1,28 +1,19 @@
 <template>
     <div class="user-info">
-        <img :src="user.avatar" alt="User Avatar" class="avatar" />
+        <el-image class="avatar" :src="APP_CONFIG.baseURL + user.userLoginInfo?.avatar" :zoom-rate="1.2" :max-scale="7"
+            :min-scale="0.2" fit="cover" />
         <div class="details">
-            <h2>{{ user.name }}</h2>
-            <p class="stats">总访问量: {{ user.totalViews }} 排名: {{ user.rank }}</p>
-            <p class="description">{{ user.description }}</p>
-            <p class="ip-location">IP 属地: {{ user.ipLocation }}</p>
+            <h2>{{ user.userLoginInfo?.username }}</h2>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import useUserStore from '@/stores/User';
+import { APP_CONFIG } from '~/app.config';
 
-const props = defineProps<{
-    user: {
-        avatar: string;
-        name: string;
-        totalViews: number;
-        rank: number;
-        description: string;
-        ipLocation: string;
-    };
-}>();
+
+const user = useUserStore();
 </script>
 
 <style scoped>

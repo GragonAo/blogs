@@ -1,36 +1,29 @@
 # utils.py
-import datetime
+from datetime import datetime, timedelta
 import json
-import logging
-
 import jwt
+import pytz
 from django.conf import settings
-from django.http import JsonResponse
-
-from functools import wraps
-
 from apps.users.models import User
-
+from functools import wraps
+from django.http import JsonResponse
 
 def create_jwt(user, expiration_minutes=15, expiration_days=0, refresh=False):
     payload = {
         'user_id': user.id,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=expiration_minutes, days=expiration_days),
-        'iat': datetime.datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(minutes=expiration_minutes, days=expiration_days),
+        'iat': datetime.utcnow(),
         'refresh': refresh
     }
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
     return token
 
-
 def json_response(data=None, code=401, message=None):
-    print(f"json_response called with code={code}, message={message}, data={data}")
     return JsonResponse({
         'code': code,
         'message': message,
         'data': data
     }, status=code)
-
 
 def jwt_authentication(func):
     @wraps(func)
@@ -57,7 +50,6 @@ def jwt_authentication(func):
 
     return wrapper
 
-
 def get(func):
     @wraps(func)
     def wrapper(request, *args, **kwargs):
@@ -65,11 +57,6 @@ def get(func):
             return json_response(code=405, message='Method not allowed')
         return func(request, *args, **kwargs)
     return wrapper
-
-
-from functools import wraps
-from django.http import JsonResponse
-
 
 def post(func):
     @wraps(func)
@@ -96,7 +83,12 @@ def put(func):
     @wraps(func)
     def wrapper(request, *args, **kwargs):
         if request.method != 'PUT':
-            return json_response(code=405, message='Method not allowed')
+            return json_response(code=405, message='接口类型不一致')
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            request.data = data
+        except json.JSONDecodeError:
+            return json_response({'message': 'Invalid JSON'}, code=400)
         return func(request, *args, **kwargs)
     return wrapper
 
@@ -107,3 +99,11 @@ def delete(func):
             return json_response(code=405, message='Method not allowed')
         return func(request, *args, **kwargs)
     return wrapper
+
+def shanghai_time():
+    # 获取上海时区
+    shanghai_tz = pytz.timezone('Asia/Shanghai')
+    current_time = datetime.now(shanghai_tz)
+    print(current_time)
+    # 将当前时间转换为上海时间
+    return current_time

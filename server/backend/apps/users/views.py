@@ -3,7 +3,6 @@ import shutil
 
 import jwt
 from django.forms import model_to_dict
-from django.views import View
 
 from apps.users.models import User, PersonalData
 from apps.users.serializes import UserSerializer

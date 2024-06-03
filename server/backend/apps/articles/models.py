@@ -25,11 +25,11 @@ class Tag(models.Model):
         return self.name
 
 class Article(models.Model):
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="所属用户")
     title = models.CharField(max_length=255, verbose_name="标题")
     content = models.TextField(verbose_name="内容")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
     likes = models.PositiveIntegerField(default=0, verbose_name="点赞数")
     views = models.PositiveIntegerField(default=0, verbose_name="访问数")
     comments_count = models.PositiveIntegerField(default=0, verbose_name="评论数")
@@ -45,7 +45,7 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
-class Comment(models.Model):
+class Comment(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name="comments", verbose_name="文章")
     content = models.TextField(verbose_name="评论内容")

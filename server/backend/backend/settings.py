@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'system.apps.SystemConfig',
     'apps.users',
     'apps.articles',
-    'apps.admins'
+    'apps.admins',
+    'apps.files'
 ]
 
 MIDDLEWARE = [

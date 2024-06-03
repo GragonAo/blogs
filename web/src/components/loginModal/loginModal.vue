@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :before-close="closeModal" width="40%" v-model="visible" :close-on-click-modal="false" :modal="false"
+    <el-dialog :before-close="closeModal" width="30%" v-model="visible" :close-on-click-modal="false" :modal="false"
         :close-on-press-escape="false" show-close="false" class="login-dialog"
         :class="['animate__animated', animationClass]">
         <h2 style="text-align: center; margin-bottom: 20px;">登录</h2>
@@ -99,16 +99,21 @@ const login = async (username: string, password: string, pictures?: ['']) => {
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.7)',
     })
-    const result = await LoginUserAPI(username, password, pictures);
-    if (result?.code == 200) {
-        userStore.setToken(result!.data);
-        closeModal();
-        router.push({ path: useSettingsStore().settings?.redirectPath });
-    } else {
-        ElMessage.error('登录失败，请检查用户名或密码');
+    await LoginUserAPI(username, password, pictures).then((res) => {
+        if (res?.code == 200) {
+            userStore.setToken(res!.data);
+            closeModal();
+            router.push({ path: useSettingsStore().settings?.redirectPath });
+        } else {
+            ElMessage.error('登录失败，请检查用户名或密码');
+            changeBtnAnimation("animate__wobble");
+        }
+    }).catch((err) => {
+        ElMessage.error(err?.message);
         changeBtnAnimation("animate__wobble");
-    }
-    loading.close()
+    }).finally(() => {
+        loading.close()
+    });
 }
 const submitForm = async () => {
     loginForm.value?.validate(async (valid) => {
@@ -123,6 +128,7 @@ const submitForm = async () => {
 };
 
 const register = () => {
+    closeModal();
     router.push({ name: 'register' });
 };
 

@@ -10,6 +10,7 @@ declare module 'vue' {
     Calendar: typeof import('./src/components/calendar/Calendar.vue')['default']
     Cps_Aside: typeof import('./src/components/layer/components/Cps_Aside.vue')['default']
     Cps_Header: typeof import('./src/components/layer/components/Cps_Header.vue')['default']
+    EditorMD: typeof import('./src/components/editor/EditorMD.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -31,6 +32,7 @@ declare module 'vue' {
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElOption: typeof import('element-plus/es')['ElOption']
+    ElProgress: typeof import('element-plus/es')['ElProgress']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
@@ -43,8 +45,10 @@ declare module 'vue' {
     LoginModal: typeof import('./src/components/loginModal/loginModal.vue')['default']
     MarkdownEditor: typeof import('./src/components/editor/MarkdownEditor.vue')['default']
     MonacoEditor: typeof import('./src/components/editor/MonacoEditor.vue')['default']
+    MusicPlayer: typeof import('./src/components/MusicPlayer/MusicPlayer.vue')['default']
     RegisterModal: typeof import('./src/components/loginModal/registerModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TimeCard: typeof import('./src/components/TimeCard/TimeCard.vue')['default']
   }
 }

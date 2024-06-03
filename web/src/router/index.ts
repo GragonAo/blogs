@@ -5,7 +5,7 @@ import myInfoPage from '@/views/myInterface/myInfoPage.vue';
 import myUserProfile from '@/views/myInterface/myUserProfile.vue';
 import index from '@/views/index/index.vue';
 import publishArticle from '@/views/articleDetail/PublishArticle/PublishArticle.vue';
-import articleDetail from '@/views/articleDetail/articlePage.vue';
+import articlePage from '@/views/articleDetail/articlePage.vue';
 import cloudDesktop from '@/views/Windows/cloudDesktop.vue'
 import loginModal from '@/components/loginModal/loginModal.vue'
 import registerModal from '@/components/loginModal/registerModal.vue'
@@ -20,23 +20,23 @@ const router = createRouter({
     {
       path: '/',
       name: 'layer',
-      component: Layer, // 使用 Layer 组件作为布局  
-      children: [ // 子路由定义在 Layer 组件内部的 <router-view> 中渲染的内容 
+      component: Layer, 
+      children: [
         {
-          path: '/', // 当访问 '/' 时，默认渲染此组件  
+          path: '/',
           name: 'index',
-          component: index, // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          component: index,
         },
         {
-          path: '/myInterface', // 当访问 '/' 时，默认渲染此组件  
+          path: '/myInterface',
           name: 'myInterface',
-          component: myInterface, // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          component: myInterface,
           meta: { requiresAuth: true },
         },
         {
           path: '/articleDetail/:articleId',
-          name: 'articleDetail',
-          component: articleDetail // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          name: 'articlePage',
+          component: articlePage 
         },
         {
           path: '/articleDetail/publishArticle',
@@ -45,21 +45,21 @@ const router = createRouter({
           meta: { requiresAuth: true },
         },
         {
-          path: '/myInterface/mySecuritySettings', // 当访问 '/' 时，默认渲染此组件  
+          path: '/myInterface/mySecuritySettings', 
           name: 'mySecuritySettings',
-          component: mySecuritySettings, // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          component: mySecuritySettings, 
           meta: { requiresAuth: true },
         },
         {
-          path: '/myInterface/myInfoPage', // 当访问 '/' 时，默认渲染此组件  
+          path: '/myInterface/myInfoPage', 
           name: 'myInfoPage',
-          component: myInfoPage, // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          component: myInfoPage,
           meta: { requiresAuth: true },
         },
         {
-          path: '/myInterface/myUserProfile', // 当访问 '/' 时，默认渲染此组件  
+          path: '/myInterface/myUserProfile', 
           name: 'myUserProfile',
-          component: myUserProfile, // 渲染 Index 组件到 Layer 的 <router-view> 中  
+          component: myUserProfile, 
           meta: { requiresAuth: true },
         },
         {
@@ -67,13 +67,12 @@ const router = createRouter({
           name: 'register',
           component: registerModal
         }
-        // ... 其他子路由，例如其他页面组件  
       ]
     },
     {
       path: '/cloudDesktop',
       name: 'cloudDesktop',
-      component: cloudDesktop, // 使用 Layer 组件作为布局 
+      component: cloudDesktop,
       meta: { requiresAuth: true },
     },
     {

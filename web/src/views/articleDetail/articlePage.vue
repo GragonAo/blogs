@@ -1,27 +1,24 @@
 <template>
     <div class="container">
-        <aside class="sidebar">
-            <UserInfo :user="user" />
-            <div class="subscribe">
-                <button>私信</button>
-                <button>关注</button>
-            </div>
-            <div class="promotion">
-                <img src="" alt="Promotion" />
-            </div>
-        </aside>
-        <main class="main-content">
-            <ArticleInfo title="【架构之路】提升后端接口性能的实战技巧" author="The-Venus" date="2024-05-17 08:00:00" :views="5000"
-                content="<h2>你眼中的IT行业现状与未来趋势</h2><p>文章内容...</p>" />
-        </main>
+        <el-scrollbar height="500px" class="scrollbar">
+            <el-row gutter="20">
+                <el-col :span="24">
+                    <Article :title="article?.title" :author="article?.user" :date="formatDate(article?.create_time)"
+                        :views="article?.views" :content="article?.content" />
+                </el-col>
+            </el-row>
+        </el-scrollbar>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import UserInfo from './components/UserInfo.vue';
-import ArticleInfo from './components/ArticleInfo.vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import Article from './components/ArticleInfo.vue';
+import { GetArticleAPI } from '@/API/Article';
+import type { ArticleInfo } from '@/API/API_Types/Article';
 
+const route = useRoute();
 const user = ref({
     avatar: '', // 替换为你的头像路径
     name: 'The-Venus',
@@ -29,19 +26,51 @@ const user = ref({
     original: 271,
     weekRank: 36,
     totalRank: 471,
-    badges: ['', '', ''], // 替换为你的徽章路径
+    badges: [], // 替换为你的徽章路径
+});
+
+const article = ref<ArticleInfo>();
+
+const getArticleInfo = async () => {
+    const id = route.params.articleId; // 获取路径参数中的id
+    console.log(id);
+    const res = await GetArticleAPI(id);
+    console.log(res);
+    if (res?.code === 200) {
+        article.value = res.data; // 假设返回的数据结构是正确的
+    }
+}
+const formatDate = (date: string | undefined) => {
+    if (!date) return '';
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    };
+    return new Date(date).toLocaleDateString('zh-CN', options);
+}
+onMounted(() => {
+    getArticleInfo();
 });
 </script>
 
 <style scoped>
 .container {
     display: flex;
+    padding-top: 20px;
+    height: 100%;
+    width: 100%;
+}
+
+.scrollbar {
+    width: 100%;
+    padding: 20px;
 }
 
 .sidebar {
     width: 250px;
     padding: 20px;
-    border-right: 1px solid #ddd;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .subscribe {
@@ -50,16 +79,34 @@ const user = ref({
     margin-top: 20px;
 }
 
+.btn {
+    background-color: #409eff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #66b1ff;
+}
+
 .promotion {
     margin-top: 20px;
 }
 
 .promotion img {
     width: 100%;
+    border-radius: 8px;
 }
 
 .main-content {
     flex: 1;
     padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 </style>

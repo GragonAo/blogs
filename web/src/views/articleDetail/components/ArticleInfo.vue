@@ -3,11 +3,12 @@
         <div class="article-info">
             <h1>{{ title }}</h1>
             <div class="meta">
-                <span>{{ author }}</span>
                 <span>{{ date }}</span>
                 <span>阅读量: {{ views }}</span>
             </div>
-            <div class="content" v-html="content"></div>
+            <div class="content">
+                <MdPreview :modelValue="content" height="500px" />
+            </div>
         </div>
     </el-card>
 
@@ -15,7 +16,8 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue';
-
+import { MdPreview } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 const props = defineProps<{
     title: string;
     author: string;

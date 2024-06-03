@@ -3,7 +3,7 @@ export type UserRegister = {
     password: string,
     password_confirm?: string,
     email: string,
-    mobile?: number,
+    mobile?: string,
     avatar?: string
     verificatory?: number
 }

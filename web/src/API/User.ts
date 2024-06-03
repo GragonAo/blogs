@@ -2,7 +2,6 @@ import Http from "@/G_FrameWork/Net/Http"
 import SingletonFactory from "@/G_FrameWork/SingletonFactory"
 import type { Result } from './API_Types/Base'
 import type { UserInfo, ResponseUserLogin, UserRegister, UserProfile } from "./API_Types/User";
-import useUserStore from "@/stores/User";
 const http = SingletonFactory.getInstance(Http);
 
 export const RegisterUserAPI = (data: UserRegister) => {

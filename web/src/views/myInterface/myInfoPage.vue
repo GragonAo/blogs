@@ -1,33 +1,31 @@
 <template>
     <div class="container">
         <header>
-            <UserInfo :user="user" />
+            <UserInfo />
         </header>
         <div class="content">
             <aside class="sidebar">
                 <UserAchievements :achievements="achievements" />
             </aside>
             <main class="main-content">
-                <ArticleList :articles="articles" />
+                <el-scrollbar height="500">
+                    <el-row class="post-row" v-for="article in articles" :key="article.id">
+                        <ArticleCard style="width: 99%;" :article="article" />
+                    </el-row>
+                </el-scrollbar>
             </main>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import UserInfo from './components/UserHomeInfo.vue';
 import UserAchievements from './components/UserAchievements.vue';
-import ArticleList from './components/ArticleList.vue';
-
-const user = ref({
-    avatar: '/path/to/avatar.jpg', // 替换为你的头像路径
-    name: 'Gragon-Li',
-    totalViews: 30721,
-    rank: 77,
-    description: 'every effort has its rewards.',
-    ipLocation: '福建省',
-});
+import ArticleCard from '@/views/articleDetail/components/ArticleCard.vue';
+import type { ArticleInfo } from '@/API/API_Types/Article';
+import { GetUserArticlesAPI } from '@/API/Article';
+import { ElMessage } from 'element-plus';
 
 const achievements = ref([
     { title: '总访问量', count: 30721 },
@@ -35,29 +33,19 @@ const achievements = ref([
     { title: '排名', count: 1943259 },
 ]);
 
-const articles = ref([
-    {
-        id: 1,
-        title: 'NOIP2003提高组——加分二叉树',
-        description: '题目：设一个节点的二叉树 tree 的中序遍历为(1,2,3,...,n1,2,3,...,n)，其中节点编号。',
-        date: '2022-05-31',
-        views: 232,
-    },
-    {
-        id: 2,
-        title: '凸多边形的划分',
-        description: '题目：给定一个 n 个顶点的凸多边形，每个顶点的权值都是一个正整数。',
-        date: '2022-05-31',
-        views: 882,
-    },
-    {
-        id: 3,
-        title: 'LeetCode——1143. 最长公共子序列',
-        description: '给定两个字符串 text1 和 text2，返回这两个字符串的最长公共子序列的长度。',
-        date: '2022-05-31',
-        views: 1475,
-    },
-]);
+const articles = ref<ArticleInfo[]>([]);
+const getArticle = async () => {
+    await GetUserArticlesAPI().then((res) => {
+        if (res?.code == 200) articles.value = res?.data;
+        ElMessage.success("查询成功");
+    }).catch((err) => {
+        ElMessage.error(err);
+        return;
+    })
+}
+onMounted(() => {
+    getArticle();
+});
 </script>
 
 <style scoped>

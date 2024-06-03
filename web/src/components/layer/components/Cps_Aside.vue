@@ -90,7 +90,7 @@ const handleRoute = (routeName: string) => {
 
 <style>
 .el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 200px;
+    width: 150px;
     min-height: 400px;
     padding-top: 30px;
 }

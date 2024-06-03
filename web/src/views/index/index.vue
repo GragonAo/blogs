@@ -1,76 +1,64 @@
+复制代码
 <template>
-    <div class="blog-content">
-        <el-row>
-            <el-col :span="19">
-                <el-main>
-                    <el-scrollbar max-height="600px" wrap-class="scrollbar-wrapper">
-                        <section class="blog-posts">
-                            <h2>Latest Blog Posts</h2>
-                            <el-row :gutter="20" class="post-row" v-for="post in posts" :key="post.id">
-                                <el-col :span="24">
-                                    <el-card class="blog-post-card">
-                                        <template #header>
-                                            <h3>{{ post.title }}</h3>
-                                        </template>
-                                        <template #default>
-                                            <p>{{ post.content }}</p>
-                                        </template>
-                                        <template #footer>
-                                            <el-button type="text" class="read-more" @click="goToPost(post.id)">Read
-                                                More</el-button>
-                                        </template>
-                                    </el-card>
-                                </el-col>
-                            </el-row>
-                        </section>
-                    </el-scrollbar>
-                </el-main>
-            </el-col>
-            <el-col :span="5">
-                <el-aside width="300px" style="padding-right: 20px;">
-                    <div class="blog-sidebar">
-                        <h3>Popular Tags</h3>
-                        <el-scrollbar max-height="200px">
-                            <el-card class="tag-card" v-for="tag in tags" :key="tag.id">
-                                <template #header>
-                                    <span class="tag-name">{{ tag.name }}</span>
-                                </template>
-                            </el-card>
-                        </el-scrollbar>
-                    </div>
-                    <Calendar />
-                </el-aside>
-            </el-col>
-        </el-row>
-    </div>
+    <el-row>
+        <el-col :span="18">
+            <el-main>
+                <h2>最新文章</h2>
+                <el-scrollbar height="500">
+                    <el-progress v-if="loading" :percentage="progress" :indeterminate="false" />
+                    <el-row class="post-row" v-for="article in articles" :key="article.id">
+                        <ArticleCard style="width: 99%;" :article="article" />
+                    </el-row>
+                </el-scrollbar>
+            </el-main>
+        </el-col>
+        <el-col :span="6">
+            <el-aside style="padding-right: 5px;">
+                <TimeCard style="margin-top:50px;" />
+                <Calendar />
+            </el-aside>
+        </el-col>
+    </el-row>
 </template>
 
 <script setup lang='ts'>
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
 import Calendar from '@/components/calendar/Calendar.vue';
+import TimeCard from '@/components/TimeCard/TimeCard.vue';
 import type { ArticleInfo } from '@/API/API_Types/Article';
 import { GetArtiecleListAPI } from '@/API/Article';
+import ArticleCard from '../articleDetail/components/ArticleCard.vue';
 
-const router = useRouter();
-const posts = ref<ArticleInfo[]>([]);
-const tags = ref([
-    { id: 1, name: 'Vue' },
-    { id: 2, name: 'JavaScript' },
-    { id: 3, name: 'Frontend' },
-    { id: 4, name: 'CSS' },
-]);
-
-const goToPost = (articleId: number) => {
-    router.push({ name: 'articleDetail', params: { articleId } });
-};
+const articles = ref<ArticleInfo[]>([]);
+const loading = ref<boolean>(false);
+const progress = ref<number>(0);
 
 const getArticleList = async () => {
-    const res = await GetArtiecleListAPI();
-    if (res.code >= 200 && res.code < 300) {
-        posts.value = res.data;
-    } else {
-        // 处理错误
+    loading.value = true;
+    progress.value = 0;
+
+    // 模拟进度条加载
+    const interval = setInterval(() => {
+        if (progress.value < 90) {
+            progress.value += 10;
+        }
+    }, 300);
+
+    try {
+        const res = await GetArtiecleListAPI();
+        if (res?.code >= 200 && res?.code < 300) {
+            articles.value = res!.data;
+        } else {
+            // 处理错误
+            console.error('Failed to fetch articles:', res);
+        }
+    } catch (error) {
+        // 处理请求错误
+        console.error('Error fetching articles:', error);
+    } finally {
+        clearInterval(interval);
+        progress.value = 100;
+        loading.value = false;
     }
 };
 
@@ -80,10 +68,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.blog-content {
-    padding: 20px;
-}
-
 .blog-main-content {
     display: flex;
 }

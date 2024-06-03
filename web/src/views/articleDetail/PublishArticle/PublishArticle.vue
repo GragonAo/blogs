@@ -15,7 +15,7 @@ import TextEditor from './components/TextEditor.vue';
 
 <style scoped>
 .el-header {
-    background-color: #f0f2f5;
+    background-color: rgba(240, 244, 249, 0.3);
     padding: 20px;
     text-align: center;
 }

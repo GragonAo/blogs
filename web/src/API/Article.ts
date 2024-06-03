@@ -9,12 +9,15 @@ export const GetArtiecleListAPI = () => {
 export const GetArticleAPI = (id: number) => {
     return http.get<Result<ArticleInfo>>('api/articles/' + id);
 }
+export const GetUserArticlesAPI = () => {
+    return http.get<Result<ArticleInfo[]>>('api/articles/userArticles/');
+}
 export const CreateArticleAPI = (title: string, content: string) => {
     return http.post<Result<ArticleInfo>>('api/articles/create/', { title, content });
 }
-export const UpdateArticleAPI = (title: string, content: string) => {
-    return http.put<Result<ArticleInfo>>('api/articles/', { title, content });
+export const UpdateArticleAPI = (id: number, data: ArticleInfo) => {
+    return http.put<Result<ArticleInfo>>('api/articles/update/' + id, data);
 }
 export const DeleteArticleAPI = (id: number) => {
-    return http.delete<Result<null>>('api/articles/' + id);
+    return http.delete<Result<null>>('/api/articles/delete/' + id);
 }

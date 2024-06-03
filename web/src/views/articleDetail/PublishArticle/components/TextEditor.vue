@@ -5,11 +5,7 @@
                 <el-input v-model="form.title" placeholder="请输入文章标题（5~100个字）"></el-input>
             </el-form-item>
             <el-form-item label="内容">
-                <el-card style="width: 100%;">
-                    <el-input v-if="isEditing" type="textarea" v-model="form.content" placeholder="请输入文章内容"
-                        rows="10"></el-input>
-                    <MarkDownEditor v-else :markdown-text="form.content" />
-                </el-card>
+                <md-editor v-model="form.content" height="500px" @onUploadImg="handleUploadImg" />
             </el-form-item>
         </el-form>
         <el-divider></el-divider>
@@ -21,14 +17,18 @@
             <el-button type="primary" @click="handlePublish">发布文章</el-button>
         </div>
     </el-card>
+
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import MarkDownEditor from '@/components/editor/MarkdownEditor.vue'
+import { MdEditor } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 import { useArticleStore } from '@/stores/Article';
 import { CreateArticleAPI } from '@/API/Article';
+import { UploadImgAPI } from '@/API/File.ts';
+import { APP_CONFIG } from '~/app.config';
 const isEditing = ref(true);
 const form = ref({
     title: '',
@@ -36,7 +36,6 @@ const form = ref({
 });
 const handleSaveDraft = () => {
     useArticleStore().setArticleInfo(form.value);
-    // 保存草稿逻辑
     ElMessage.success('草稿保存成功');
 };
 const clearArticle = () => {
@@ -55,8 +54,21 @@ const handlePublish = async () => {
     const res = await CreateArticleAPI(form.value.title, form.value.content);
     if (res?.code === 200) {
         ElMessage.success('文章发布成功');
+        form.value.content = '';
+        form.value.title = '';
     }
 };
+const handleUploadImg = async (files: FileList, callback: (urls: string[]) => void) => {
+    const uploadPromises = Array.from(files).map(async file => {
+        let data = new FormData();
+        data.append('imgs', file);
+        const res = await UploadImgAPI(data);
+        return APP_CONFIG.baseURL + res?.data?.imgs as string;
+    });
+    const urls = await Promise.all(uploadPromises);
+    callback(urls);
+};
+
 onMounted(() => {
     if (useArticleStore().useArticleInfo) {
         form.value = useArticleStore().useArticleInfo!;
@@ -66,12 +78,6 @@ onMounted(() => {
 
 <style scoped>
 .el-card {
-    margin: 20px;
-}
-
-.toolbar {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+    margin: 5px;
 }
 </style>

@@ -6,7 +6,7 @@
                     <h3>{{ article?.title }}</h3>
                 </div>
                 <div class="card-content">
-                    <p>{{ article?.content }}</p>
+                    <p>{{ truncatedContent }}</p>
                 </div>
                 <div class="card-footer">
                     <div class="meta-group">
@@ -17,39 +17,33 @@
                     </div>
                     <div class="button-group">
                         <el-button type="primary" @click="viewArticle(article?.id)">查看详情</el-button>
-                        <el-button v-if="user.userLoginInfo?.id === article?.user" type="primary"
-                            @click="editArticle(article?.id)">修改</el-button>
-                        <el-button v-if="user.userLoginInfo?.id === article?.user" type="danger"
-                            @click="centerDialogVisible = true">删除</el-button>
                     </div>
                 </div>
             </el-card>
         </el-col>
-        <el-dialog v-model="centerDialogVisible" title="确定要删除这篇文章吗？" width="500" align-center>
-            <div class="dialog-footer">
-                <el-button @click="deleteArticle(article?.id)">确定</el-button>
-                <el-button type="primary" @click="centerDialogVisible = false">
-                    取消
-                </el-button>
-            </div>
-        </el-dialog>
     </el-row>
-
 </template>
 
 <script setup lang="ts">
 import router from '@/router';
 import type { ArticleInfo } from '@/API/API_Types/Article';
-import useUserStore from '@/stores/User';
-import { DeleteArticleAPI } from '@/API/Article';
-import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
-const centerDialogVisible = ref(false)
-const user = useUserStore();
-defineProps<{
+import { computed } from 'vue';
+
+// 使用 defineProps 定义 props
+const props = defineProps<{
     article?: ArticleInfo
 }>();
 
+// 定义截断内容的计算属性
+const truncatedContent = computed(() => {
+    if (!props.article || !props.article.content) return '';
+    const maxLength = 100;
+    return props.article.content.length > maxLength
+        ? props.article.content.slice(0, maxLength) + '...'
+        : props.article.content;
+});
+
+// 定义查看文章的函数
 const viewArticle = (id?: number) => {
     if (id) {
         router.push({
@@ -60,28 +54,8 @@ const viewArticle = (id?: number) => {
         console.warn('Article ID is undefined');
     }
 }
-const editArticle = (id?: number) => {
-    if (id) {
-        router.push({
-            name: 'articlePage',
-            params: { articleId: id }
-        });
-    } else {
-        console.warn('Article ID is undefined');
-    }
-}
-const deleteArticle = async (id?: number) => {
-    if (id) {
-        await DeleteArticleAPI(id).then((res) => {
-            ElMessage.success(res?.message);
-        }).catch((err) => {
-            ElMessage.error(err);
-        });
-    } else {
-        console.warn('Article ID is undefined');
-    }
-}
 
+// 定义格式化日期的函数
 const formatDate = (date: string | undefined) => {
     if (!date) return '';
     const options: Intl.DateTimeFormatOptions = {

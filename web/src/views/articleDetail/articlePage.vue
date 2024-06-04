@@ -3,8 +3,7 @@
         <el-scrollbar height="500px" class="scrollbar">
             <el-row gutter="20">
                 <el-col :span="24">
-                    <Article :title="article?.title" :author="article?.user" :date="formatDate(article?.create_time)"
-                        :views="article?.views" :content="article?.content" />
+                    <Article v-if="article" :article="article!" />
                 </el-col>
             </el-row>
         </el-scrollbar>

@@ -16,7 +16,7 @@ export const CreateArticleAPI = (title: string, content: string) => {
     return http.post<Result<ArticleInfo>>('api/articles/create/', { title, content });
 }
 export const UpdateArticleAPI = (id: number, data: ArticleInfo) => {
-    return http.put<Result<ArticleInfo>>('api/articles/update/' + id, data);
+    return http.put<Result<ArticleInfo>>('api/articles/update/' + id + '/', data);
 }
 export const DeleteArticleAPI = (id: number) => {
     return http.delete<Result<null>>('/api/articles/delete/' + id);

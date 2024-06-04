@@ -9,7 +9,8 @@ export type UserRegister = {
 }
 export type ResponseUserLogin = {
     token: string,
-    refresh: string,
+    refresh_token: string,
+    user_id: number
 }
 export type UserInfo = {
     username: string,

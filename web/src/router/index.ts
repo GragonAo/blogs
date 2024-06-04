@@ -5,6 +5,7 @@ import myInfoPage from '@/views/myInterface/myInfoPage.vue';
 import myUserProfile from '@/views/myInterface/myUserProfile.vue';
 import index from '@/views/index/index.vue';
 import publishArticle from '@/views/articleDetail/PublishArticle/PublishArticle.vue';
+import UpdateArticle from '@/views/articleDetail/UpdateArticle/UpdateArticle.vue';
 import articlePage from '@/views/articleDetail/articlePage.vue';
 import cloudDesktop from '@/views/Windows/cloudDesktop.vue'
 import loginModal from '@/components/loginModal/loginModal.vue'
@@ -20,7 +21,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'layer',
-      component: Layer, 
+      component: Layer,
       children: [
         {
           path: '/',
@@ -36,30 +37,35 @@ const router = createRouter({
         {
           path: '/articleDetail/:articleId',
           name: 'articlePage',
-          component: articlePage 
+          component: articlePage
         },
         {
           path: '/articleDetail/publishArticle',
           name: 'publishArticle',
           component: publishArticle,
           meta: { requiresAuth: true },
-        },
-        {
-          path: '/myInterface/mySecuritySettings', 
-          name: 'mySecuritySettings',
-          component: mySecuritySettings, 
+        }, {
+          path: '/articleDetail/updateArticle/:articleId',
+          name: 'updateArticle',
+          component: UpdateArticle,
           meta: { requiresAuth: true },
         },
         {
-          path: '/myInterface/myInfoPage', 
+          path: '/myInterface/mySecuritySettings',
+          name: 'mySecuritySettings',
+          component: mySecuritySettings,
+          meta: { requiresAuth: true },
+        },
+        {
+          path: '/myInterface/myInfoPage',
           name: 'myInfoPage',
           component: myInfoPage,
           meta: { requiresAuth: true },
         },
         {
-          path: '/myInterface/myUserProfile', 
+          path: '/myInterface/myUserProfile',
           name: 'myUserProfile',
-          component: myUserProfile, 
+          component: myUserProfile,
           meta: { requiresAuth: true },
         },
         {

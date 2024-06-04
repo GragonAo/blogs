@@ -8,6 +8,7 @@
             <canvas ref="canvasRef"></canvas>
         </div>
     </div>
+
 </template>
 
 <script setup lang='ts'>
@@ -133,7 +134,6 @@ const startFaceDetection = async () => {
         faceapi.draw.drawDetections(canvas, resizeDetections);
         faceapi.draw.drawFaceLandmarks(canvas, resizeDetections);
         faceapi.draw.drawFaceExpressions(canvas, resizeDetections);
-        console.log(detections);
         if (detections.length === 0) {
             message.value = '未检测到人脸，请对准摄像头';
             return;

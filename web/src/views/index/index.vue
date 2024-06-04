@@ -6,7 +6,7 @@
                 <h2>最新文章</h2>
                 <el-scrollbar height="500">
                     <el-progress v-if="loading" :percentage="progress" :indeterminate="false" />
-                    <el-row class="post-row" v-for="article in articles" :key="article.id">
+                    <el-row v-for="article in articles" :key="article.id">
                         <ArticleCard style="width: 99%;" :article="article" />
                     </el-row>
                 </el-scrollbar>
@@ -25,42 +25,32 @@
 import { onMounted, ref } from 'vue';
 import Calendar from '@/components/calendar/Calendar.vue';
 import TimeCard from '@/components/TimeCard/TimeCard.vue';
-import type { ArticleInfo } from '@/API/API_Types/Article';
+import type { ArticleBasicInfo } from '@/API/API_Types/Article';
 import { GetArtiecleListAPI } from '@/API/Article';
 import ArticleCard from '../articleDetail/components/ArticleCard.vue';
 
-const articles = ref<ArticleInfo[]>([]);
+const articles = ref<ArticleBasicInfo[]>([]);
 const loading = ref<boolean>(false);
 const progress = ref<number>(0);
 
 const getArticleList = async () => {
     loading.value = true;
     progress.value = 0;
-
-    // 模拟进度条加载
     const interval = setInterval(() => {
         if (progress.value < 90) {
             progress.value += 10;
         }
     }, 300);
-
-    try {
-        const res = await GetArtiecleListAPI();
-        if (res?.code >= 200 && res?.code < 300) {
-            articles.value = res!.data;
-        } else {
-            // 处理错误
-            console.error('Failed to fetch articles:', res);
-        }
-    } catch (error) {
-        // 处理请求错误
-        console.error('Error fetching articles:', error);
-    } finally {
+    await GetArtiecleListAPI().then((res) => {
+        articles.value = res!.data;
+    }).catch((err) => {
+        console.error('Error fetching articles:', err);
+    }).finally(() => {
         clearInterval(interval);
         progress.value = 100;
         loading.value = false;
-    }
-};
+    })
+}
 
 onMounted(() => {
     getArticleList();

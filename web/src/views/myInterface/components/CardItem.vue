@@ -1,52 +1,35 @@
 <template>
-    <div class="card-group" style="display: flex; flex-wrap: wrap;">
+    <div class="card-group">
         <el-card v-for="(card, index) in cards" :key="index" class="card" :style="{ width: cardWidth }"
-            style="height: 200px;" @mouseover="cardHovered(index)" @mouseout="cardLeft(index)">
+            @mouseover="cardHovered(index)" @mouseout="cardLeft(index)">
             <div class="card-content">
-                <h3>{{ card.name }}</h3>
-                <p>{{ card.description || 'No description available' }}</p>
-                <p><strong>Language:</strong> {{ card.language || 'N/A' }}</p>
-                <a :href="card.html_url" target="_blank">View on GitHub</a>
+                <h3 class="card-title">{{ card.name }}</h3>
+                <p class="card-description">{{ card.description || 'No description available' }}</p>
+                <p class="card-language"><strong>Language:</strong> {{ card.language || 'N/A' }}</p>
+                <a :href="card.html_url" target="_blank" class="card-link">View on GitHub</a>
             </div>
         </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
-import Http from '@/G_FrameWork/Net/Http';
-import SingletonFactory from '@/G_FrameWork/SingletonFactory';
-import { computed, ref, onMounted } from 'vue';
-
-
-interface Repo {
-    name: string;
-    description: string | null;
-    html_url: string;
-    language: string | null;
-}
+import { ref, computed, onMounted } from 'vue';
+import { GetGetHubProject } from '@/API/User';
+import type { Repo } from '@/API/API_Types/User';
 
 const cards = ref<Repo[]>([]);
 
 const fetchGitHubRepos = async () => {
-    try {
-        const response = await SingletonFactory.getInstance(Http).get('https://api.github.com/users/MyHolleworld/repos');
-        cards.value = response.data;
-        console.log(cards.value)
-    } catch (error) {
-        console.error('Error fetching GitHub repositories:', error);
-    }
+    await GetGetHubProject().then((res) => {
+        if (res?.code == 200) {
+            cards.value = res.data;
+        }
+    });
 };
 
 onMounted(fetchGitHubRepos);
 
-const cardWidth = computed(() => {
-    return 'calc(50% - 20px)';
-});
-
-const cardHeight = computed(() => {
-    return `calc(${cardWidth.value} * 10 / 13)`;
-});
-
+const cardWidth = computed(() => 'calc(50% - 20px)');
 const hoveredCard = ref<number | null>(null);
 
 const cardHovered = (index: number) => {
@@ -60,59 +43,80 @@ const cardLeft = () => {
 
 <style scoped>
 .card-group {
-    /* 让卡片从左边开始排列 */
+    display: flex;
+    flex-wrap: wrap;
     justify-content: flex-start;
 }
 
 .card {
     box-sizing: border-box;
-    margin-right: 5px;
-    margin-left: 5px;
-    margin-bottom: 20px;
+    margin: 10px;
     background-color: #fff;
-    /* 或者你想要的背景色 */
-    transition: transform 0.2s ease-in-out;
-    /* 添加过渡效果 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
-    /* 用于定位悬停效果 */
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-/* 清除每行最后一个卡片的右边距 */
-.card-group .card:nth-last-child(1) {
-    margin-right: 0;
+.card:hover {
+    transform: scale(1.05);
+    z-index: 1;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* 使用媒体查询在屏幕宽度较大时变为三个卡片一行 */
+.card-content {
+    padding: 16px;
+}
+
+.card-title {
+    font-size: 1.5em;
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.card-description {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.card-language {
+    font-size: 0.875em;
+    color: #999;
+}
+
+.card-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #42b983;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.card-link:hover {
+    text-decoration: underline;
+}
+
+/* 响应式调整 */
 @media (min-width: 600px) {
     .card {
         flex: 0 0 calc(33.3333% - 20px);
     }
 
-    /* 清除每行第三个卡片的右边距 */
     .card-group .card:nth-child(3n) {
         margin-right: 0;
     }
 
-    /* 重新设置每行最后一个和倒数第二个卡片的右边距 */
     .card-group .card:nth-last-child(1),
     .card-group .card:nth-last-child(2) {
         margin-right: 20px;
     }
 }
 
-/* 卡片悬停效果 */
-.card:hover {
-    transform: scale(1.02);
-    /* 稍微放大卡片 */
-    z-index: 1;
-    /* 提升卡片层级 */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    /* 添加阴影 */
-}
-
-/* 卡片内容样式 */
-.card-content {
-    padding: 10px;
-    /* 根据需要调整内边距 */
+@media (max-width: 599px) {
+    .card {
+        flex: 0 0 calc(100% - 20px);
+    }
 }
 </style>

@@ -17,6 +17,7 @@
     "@kangc/v-md-editor": "^2.3.18",
     "animate.css": "^4.1.1",
     "axios": "^1.6.8",
+    "chart.js": "^4.4.3",
     "editor.md": "^1.5.0",
     "element-plus": "^2.7.3",
     "face-api.js": "^0.22.2",

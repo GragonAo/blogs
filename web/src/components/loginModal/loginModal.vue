@@ -90,7 +90,10 @@ const submitFace = () => {
 }
 const submitFormFace = async (pictures: ['']) => {
     console.log(pictures);
-    if (pictures.length < 1) return;
+    if (pictures.length < 1 || !pictures || pictures[0] === '') {
+        ElMessage.error("认证失败");
+        return;
+    }
     login(form.value.username, "*", pictures);
 }
 const login = async (username: string, password: string, pictures?: ['']) => {

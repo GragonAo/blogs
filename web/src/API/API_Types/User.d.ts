@@ -40,3 +40,9 @@ export type UserProfile = {
     certificates?: string | null;
     languages?: string | null;
 }
+export type Repo = {
+    name: string;
+    description: string | null;
+    html_url: string;
+    language: string | null;
+}

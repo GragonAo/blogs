@@ -47,6 +47,7 @@ class Http {
   }
 
   private httpResponseError(error: AxiosError) {
+    console.log(error)
     const res = error.response?.data as Result<any>;
     if (res && res.code === 401) {
       useUserStore().logOut();

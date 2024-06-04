@@ -23,24 +23,31 @@ import { onMounted, ref } from 'vue';
 import UserInfo from './components/UserHomeInfo.vue';
 import UserAchievements from './components/UserAchievements.vue';
 import ArticleCard from '@/views/articleDetail/components/ArticleCard.vue';
-import type { ArticleInfo } from '@/API/API_Types/Article';
+import type { ArticleBasicInfo } from '@/API/API_Types/Article';
 import { GetUserArticlesAPI } from '@/API/Article';
-import { ElMessage } from 'element-plus';
+import { ElLoading, ElMessage } from 'element-plus';
 
 const achievements = ref([
-    { title: '总访问量', count: 30721 },
+    { title: '总访问量', count: 1000 },
     { title: '原创', count: 77 },
-    { title: '排名', count: 1943259 },
+    { title: '排名', count: 100 },
 ]);
 
-const articles = ref<ArticleInfo[]>([]);
+const articles = ref<ArticleBasicInfo[]>([]);
 const getArticle = async () => {
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.3)',
+    })
     await GetUserArticlesAPI().then((res) => {
         if (res?.code == 200) articles.value = res?.data;
         ElMessage.success("查询成功");
     }).catch((err) => {
         ElMessage.error(err);
         return;
+    }).finally(() => {
+        loading.close();
     })
 }
 onMounted(() => {

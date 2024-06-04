@@ -6,6 +6,7 @@ import myUserProfile from '@/views/myInterface/myUserProfile.vue';
 import index from '@/views/index/index.vue';
 import publishArticle from '@/views/articleDetail/PublishArticle/PublishArticle.vue';
 import UpdateArticle from '@/views/articleDetail/UpdateArticle/UpdateArticle.vue';
+import SearchArticle from '@/views/articleDetail/SearchArticle/SearchArticle.vue';
 import articlePage from '@/views/articleDetail/articlePage.vue';
 import cloudDesktop from '@/views/Windows/cloudDesktop.vue'
 import loginModal from '@/components/loginModal/loginModal.vue'
@@ -44,10 +45,17 @@ const router = createRouter({
           name: 'publishArticle',
           component: publishArticle,
           meta: { requiresAuth: true },
-        }, {
+        },
+        {
           path: '/articleDetail/updateArticle/:articleId',
           name: 'updateArticle',
           component: UpdateArticle,
+          meta: { requiresAuth: true },
+        },
+        {
+          path: '/searchArticle/:searchContent',
+          name: 'searchArticle',
+          component: SearchArticle,
           meta: { requiresAuth: true },
         },
         {

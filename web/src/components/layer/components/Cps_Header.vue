@@ -9,7 +9,7 @@
         <div class="flex-grow" />
         <el-input v-model="input3" class="input-with-select el-input-long" placeholder="Please input">
             <template #append>
-                <el-button :icon="Search" />
+                <el-button @click="search" :icon="Search" />
             </template>
         </el-input>
         <el-menu-item index="1" @click="handleRoute('publishArticle')">发布文章</el-menu-item>
@@ -37,6 +37,12 @@ const handleRoute = (routeName: string) => {
 // 如果还需要处理原始的 select 事件  
 const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
+}
+const search = () => {
+    if (input3.value === '') return;
+    // 使用 router.push 导航到具有参数的命名路由  
+    router.push({ name: 'searchArticle', params: { searchContent: input3.value } });
+    input3.value = '';
 }
 const logout = () => {
     useUserStore().logOut();

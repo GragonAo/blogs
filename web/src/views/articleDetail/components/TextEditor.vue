@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits } from 'vue';
 import { ElMessage } from 'element-plus';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
@@ -62,6 +62,7 @@ const handleSubmit = async () => {
         return;
     }
     emit('submit', form.value);
+    clearArticle();
 };
 
 const handleUploadImg = async (files: FileList, callback: (urls: string[]) => void) => {

@@ -89,7 +89,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
@@ -104,6 +103,9 @@ DATABASES = {
         'PASSWORD': 'aoliao123',  # 数据库密码
         'HOST': '47.122.48.37',                   # 数据库主机，默认是 localhost
         'PORT': '33068',                       # 数据库端口，MySQL 默认是 3306
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
 

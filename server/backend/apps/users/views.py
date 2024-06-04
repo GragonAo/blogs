@@ -22,7 +22,7 @@ class UsersView():
             user = serializer['user']
             access_token = create_jwt(user, expiration_minutes=15)
             refresh_token = create_jwt(user, expiration_days=7, refresh=True)
-            return json_response(message='登录成功', code=200, data={'token':access_token, 'refresh_token':refresh_token})
+            return json_response(message='登录成功', code=200, data={'token':access_token, 'refresh_token':refresh_token,'user_id':user.id})
         else:
             return json_response(message=serializer, code=400)
 

@@ -5,30 +5,28 @@
                 <el-col :span="20">
                     <h1>{{ article.title }}</h1>
                     <div class="meta">
-                        <span>{{ article.update_time }}</span>
+                        <span>{{ formatDate(article.update_time) }}</span>
                         <span>阅读量: {{ article.views }}</span>
                     </div>
                 </el-col>
                 <el-col :span="4">
-                    <el-row>
-                        <el-col :span="24">
+                    <el-row justify="center">
+                        <el-col :span="24" class="avatar-container">
                             <el-image style="width: 100px; height: 100px; border-radius: 50%;"
-                                :src="user.userLoginInfo?.avatar" />
+                                :src="APP_CONFIG.baseURL + article.avatar" />
                         </el-col>
                     </el-row>
-                    <el-row>
-                        <el-col :span="24">
-                            <span>Username:{{ user?.token?.user_id }}</span>
+                    <el-row justify="center">
+                        <el-col :span="24" class="username-container">
+                            <span>Username: {{ article.username }}</span>
                         </el-col>
                     </el-row>
-                    <el-row v-if="article.user == user?.token?.user_id" style="padding-top: 10px;">
-                        <el-col :span="12">
+                    <el-row v-if="article.user == user?.token?.user_id" justify="center" style="padding-top: 10px;">
+                        <el-button-group class="ml-4">
                             <el-button type="primary" @click="goTOPath('updateArticle', { articleId: article.id })"
-                                :icon="Edit" circle />
-                        </el-col>
-                        <el-col :span="12">
-                            <el-button type="danger" @click="centerDialogVisible = true" :icon="Delete" circle />
-                        </el-col>
+                                :icon="Edit" />
+                            <el-button type="primary" @click="centerDialogVisible = true" :icon="Delete" />
+                        </el-button-group>
                     </el-row>
                 </el-col>
             </el-row>
@@ -55,7 +53,7 @@
 import { defineProps, ref } from 'vue';
 import { MdPreview } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import type { ArticleInfo } from '@/API/API_Types/Article.d.ts';
+import type { ArticleDetailInfo } from '@/API/API_Types/Article.d.ts';
 import {
     Delete,
     Edit,
@@ -64,10 +62,11 @@ import useUserStore from '@/stores/User';
 import { DeleteArticleAPI } from '@/API/Article';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
+import { APP_CONFIG } from '~/app.config';
 const user = useUserStore();
 const centerDialogVisible = ref(false)
 const props = defineProps<{
-    article: ArticleInfo
+    article: ArticleDetailInfo
 }>();
 const deleteArticle = async () => {
     if (props.article.id) {
@@ -92,6 +91,13 @@ const goTOPath = (name: string, param?: Record<string, any>) => {
         });
     }
 }
+const formatDate = (date: string | undefined) => {
+    if (!date) return '';
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    };
+    return new Date(date).toLocaleDateString('zh-CN', options);
+}
 </script>
 
 <style scoped>
@@ -108,5 +114,23 @@ const goTOPath = (name: string, param?: Record<string, any>) => {
 
 .content {
     margin-top: 20px;
+}
+
+.avatar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.username-container {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
 }
 </style>

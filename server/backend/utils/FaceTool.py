@@ -32,8 +32,12 @@ class FaceTool:
                 img1_path=original_file_path,
                 img2_path=decoded_file_path,
                 model_name='VGG-Face',
+                enforce_detection=False,
+                align=True,
+                threshold=0.5
             )
-            return result.get('threshold', 0)
+            print(f"Face Verification result: {result}")
+            return result.get('verified')
         except Exception as e:
             print(f"Verification failed: {e}")
             return 0
@@ -42,7 +46,3 @@ class FaceTool:
             if decoded_file_path and os.path.exists(decoded_file_path):
                 os.remove(decoded_file_path)
                 print(f"Deleted temporary file: {decoded_file_path}")
-
-# 调试信息
-# encoded_image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAYAAAA10dzkAAAAAXNSR0IAr"  # 这是一个示例编码字符串
-# print(FaceTool.verifyFace(encoded_image, 'original_image.png'))

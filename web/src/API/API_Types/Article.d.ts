@@ -1,4 +1,4 @@
-export type ArticleInfo = {
+export type ArticleBasicInfo = {
     id?: number,
     create_time?: string
     update_time?: string,
@@ -11,4 +11,8 @@ export type ArticleInfo = {
     categories?: string,
     tags?: string,
     user?: number
+}
+export type ArticleDetailInfo = ArticleBasicInfo & {
+    username: string,
+    avatar: string
 }

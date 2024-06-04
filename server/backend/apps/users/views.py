@@ -2,8 +2,10 @@ import os
 import shutil
 
 import jwt
+from bs4 import BeautifulSoup
+from django.core.cache import cache
 from django.forms import model_to_dict
-
+import requests
 from apps.users.models import User, PersonalData
 from apps.users.serializes import UserSerializer
 from backend import settings
@@ -11,9 +13,15 @@ from utils.FileTools import fileVerify
 from utils.utils import get, json_response, post, jwt_authentication, create_jwt
 
 
-@post
 def simple_view(request, *args, **kwargs):
-    return json_response({'message': 'Hello, world!'})
+    # 尝试从缓存中获取一个键
+    value = cache.get('my_key')
+
+    if value is None:
+        # 如果键不存在，将其设置为一个新值
+        cache.set('my_key', 'Hello, Redis!', timeout=60)  # 60秒超时
+        value = cache.get('my_key')
+    return json_response({'value': value})
 class UsersView():
     @post
     def login(request, *args, **kwargs):
@@ -59,6 +67,36 @@ class UsersView():
         userProfile = PersonalData.objects.get(id=user.id)
         user_profile_data = model_to_dict(userProfile, exclude=['user', 'id'])
         return json_response(message='用户信息获取成功', code=200, data=user_profile_data)
+
+    @get
+    @jwt_authentication
+    def fetch_github_repos(request, *args, **kwargs):
+        user = request.user
+        userInfo = PersonalData.objects.get(id=user.id)
+        username = None
+        if userInfo:
+            url = userInfo.github
+            if url:
+                username = url.split('/')[-1]
+
+        if username:
+            api_url = f"https://api.github.com/users/{username}/repos"
+            response = requests.get(api_url)
+            if response.status_code == 200:
+                repos_data = response.json()
+                formatted_repos_data = []
+                for repo in repos_data:
+                    repo_info = {
+                        "name": repo["name"],
+                        "description": repo["description"] or "No description",
+                        "html_url": repo["html_url"],
+                        "language": repo["language"] or "N/A"
+                    }
+                    formatted_repos_data.append(repo_info)
+                return json_response(formatted_repos_data, 200, "查询成功")
+            else:
+                return json_response({}, 400, "查询失败")
+        return json_response({}, 400, "查询失败")
     @post
     def refresh_token(request, *args, **kwargs):
         refresh_token = request.data.get('refresh_token')

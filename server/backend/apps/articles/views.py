@@ -1,14 +1,8 @@
-from datetime import datetime
 
-import pytz
 from django.forms import model_to_dict
-from django.utils import timezone
-from django.utils.timezone import make_aware
-
 from apps.articles.models import Article
 from apps.articles.serializes import ArticleSerializer
 from utils.utils import get, json_response, post, jwt_authentication, put, delete, shanghai_time
-
 
 class ArticlesView():
     @get
@@ -22,7 +16,9 @@ class ArticlesView():
         user = request.user
         serializer = ArticleSerializer.create_validate(request.data)
         if isinstance(serializer, dict):
-            Article(title=serializer['title'],content= serializer['content'],user_id=user.id).save()
+            article = Article(title=serializer['title'], content=serializer['content'], user_id=user.id)
+            article.save()
+            # article.generate_tags()
         else: return json_response(message=serializer, code=400)
         return json_response(message='发布成功', code=200)
     @get
@@ -39,10 +35,12 @@ class ArticlesView():
     def getArticle(request, *args, **kwargs):
         try:
             articleId = kwargs.get('articleId')
-            article = Article.objects.get(id=articleId)
+            article = Article.objects.select_related('user').get(id=articleId)
             article_data = model_to_dict(article)
             article_data['create_time'] = article.create_time
             article_data['update_time'] = article.update_time
+            article_data['username'] = article.user.username
+            article_data['avatar'] = article.user.avatar.url
             return json_response(data=article_data,code=200,message="获取成功")
         except Exception as e:
             return json_response(message="获取失败\n"+str(e), code=400)
@@ -78,3 +76,9 @@ class ArticlesView():
             return json_response(message="删除成功",code=200)
         except Exception as e:
             return json_response(message=str(e), code=400)
+    @get
+    def search_articles(request, *args, **kwargs):
+        content = kwargs.get('searchContent')
+        articles = Article.objects.filter(title__icontains=content) | Article.objects.filter(content__icontains=content)
+        articles_json = list(articles.values())
+        return json_response(data=articles_json, code=200, message="获取成功")

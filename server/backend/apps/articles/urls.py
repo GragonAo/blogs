@@ -8,4 +8,5 @@ urlpatterns = [
     path('userArticles/', views.ArticlesView.userArticles),
     path('update/<int:articleId>/', views.ArticlesView.update),
     path('delete/<int:articleId>/', views.ArticlesView.delete),
+    path('search/<str:searchContent>/', views.ArticlesView.search_articles),
 ]

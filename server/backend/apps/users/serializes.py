@@ -27,7 +27,8 @@ class UserSerializer:
             original_file_path = os.path.join(settings.BASE_DIR, user.face)
             if os.path.exists(original_file_path):
                 verify_scores = FaceTool.verifyFace(imgBase64[0].split(',', 1)[1], original_file_path)
-                if verify_scores > 0.6:
+                print(verify_scores)
+                if verify_scores:
                     return {'user': user}  # 直接通过验证
                 else:
                     return "人脸识别不通过"

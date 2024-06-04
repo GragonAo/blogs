@@ -1,21 +1,26 @@
 from django.db import models
-
 from apps.users.models import User
 from utils.db import BaseModel
+import spacy
 
+# 加载spaCy模型
+nlp = spacy.load('zh_core_web_sm')
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name="分类名称")
+
     class Meta:
         db_table = 'categories'
         verbose_name = '分类'
         verbose_name_plural = '分类'
+
     def __str__(self):
         return self.name
 
 
 class Tag(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name="标签名称")
+
     class Meta:
         db_table = 'tags'
         verbose_name = '标签'
@@ -23,6 +28,7 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Article(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
@@ -44,6 +50,14 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+    def generate_tags(self):
+        doc = nlp(self.content)
+        tags = set(ent.text for ent in doc.ents)
+        for tag_name in tags:
+            tag, created = Tag.objects.get_or_create(name=tag_name)
+            self.tags.add(tag)
+
 
 class Comment(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")

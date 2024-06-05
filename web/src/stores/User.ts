@@ -1,11 +1,14 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { useRouter } from 'vue-router'; // 引入 useRouter
 import type { ResponseUserLogin, UserInfo, UserProfile } from '@/API/API_Types/User';
 
 export const useUserStore = defineStore('user', () => {
   const userLoginInfo = ref<UserInfo | undefined>(undefined);
   const userProfile = ref<UserProfile | undefined>(undefined);
   const token = ref<ResponseUserLogin | undefined>();
+  const router = useRouter(); // 使用 useRouter 钩子
+
   const setToken = (value: ResponseUserLogin) => {
     token.value = value;
     localStorage.setItem('token', JSON.stringify(value));
@@ -23,6 +26,7 @@ export const useUserStore = defineStore('user', () => {
     clearToken();
     clearUserInfo();
     clearUserProfile();
+    router.push('/'); // 在登出后跳转到 /
   }
   const clearToken = () => {
     token.value = undefined;

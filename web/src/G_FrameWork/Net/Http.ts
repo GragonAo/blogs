@@ -39,8 +39,7 @@ class Http {
   private httpResponseInterceptor(response: AxiosResponse) {
     console.log(response)
     if (response.status === 401 && response.data.message === 'Token has expired') {
-      useUserStore().clearUserInfo();
-      useUserStore().clearToken();
+      useUserStore().logOut();
     }
     // 可以在这里对响应数据进行处理，例如转换数据结构等  
     return response;

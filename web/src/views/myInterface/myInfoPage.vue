@@ -28,28 +28,44 @@ import { GetUserArticlesAPI } from '@/API/Article';
 import { ElLoading, ElMessage } from 'element-plus';
 
 const achievements = ref([
-    { title: '总访问量', count: 1000 },
-    { title: '原创', count: 77 },
-    { title: '排名', count: 100 },
+    { title: '总访问量', count: 0 },
+    { title: '原创', count: 0 },
+    { title: '排名', count: 0 },
 ]);
 
 const articles = ref<ArticleBasicInfo[]>([]);
+
+const calculateAchievements = () => {
+    const totalViews = articles.value.reduce((sum, article) => sum + article.views!, 0);
+    const originalArticlesCount = articles.value.length;
+    const ranking = originalArticlesCount ? 100 - originalArticlesCount : 100;
+    achievements.value = [
+        { title: '总访问量', count: totalViews },
+        { title: '原创', count: originalArticlesCount },
+        { title: '排名', count: ranking },
+    ];
+};
+
 const getArticle = async () => {
     const loading = ElLoading.service({
         lock: true,
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.3)',
-    })
+    });
     await GetUserArticlesAPI().then((res) => {
-        if (res?.code == 200) articles.value = res?.data;
-        ElMessage.success("查询成功");
+        if (res?.code == 200) {
+            articles.value = res?.data;
+            calculateAchievements();
+            ElMessage.success("查询成功");
+        }
     }).catch((err) => {
         ElMessage.error(err);
         return;
     }).finally(() => {
         loading.close();
-    })
-}
+    });
+};
+
 onMounted(() => {
     getArticle();
 });

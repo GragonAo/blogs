@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
@@ -18,35 +18,50 @@ const props = defineProps<{
 }>();
 
 const achievementChart = ref<HTMLCanvasElement | null>(null);
+let chartInstance: Chart | null = null;
 
-onMounted(() => {
-    if (achievementChart.value && props.achievements) {
+const createChart = () => {
+    if (achievementChart.value) {
         const ctx = achievementChart.value.getContext('2d');
 
-        const labels = props.achievements.map(achievement => achievement.title);
-        const data = props.achievements.map(achievement => achievement.count);
+        if (ctx) {
+            if (chartInstance) {
+                chartInstance.destroy(); // 销毁旧图表实例
+            }
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: '成就数量',
-                    data: data,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
+            const labels = props.achievements.map(achievement => achievement.title);
+            const data = props.achievements.map(achievement => achievement.count);
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '成就数量',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
+};
+
+onMounted(() => {
+    createChart();
+});
+
+watch(() => props.achievements, () => {
+    createChart();
 });
 </script>
 
@@ -57,9 +72,7 @@ onMounted(() => {
 
 .achievements canvas {
     display: block;
-    /* 确保canvas作为块级元素显示 */
     max-width: 100%;
     height: 300px;
-    /* 设置一个具体的高度 */
 }
 </style>

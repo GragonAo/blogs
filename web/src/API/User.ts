@@ -25,3 +25,6 @@ export const UploadUserAvatarAPI = (data: FormData) => {
 export const UploadUserPhotoAPI = (data: FormData) => {
     return http.post<Result<{}>>('api/users/upload/face/', data);
 }
+export const UpdateUserProfile = (data: UserProfile) => {
+    return http.put<Result<{}>>('api/users/updateProfile/', data);
+}

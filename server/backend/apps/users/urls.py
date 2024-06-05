@@ -11,4 +11,5 @@ urlpatterns = [
     path('upload/avatar/', views.UsersView.upload_avatar),
     path('upload/face/', views.UsersView.upload_face),
     path('gethub/', views.UsersView.fetch_github_repos),
+    path('updateProfile/', views.UsersView.updateUserProfile),
 ]

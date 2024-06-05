@@ -10,7 +10,7 @@ from apps.users.models import User, PersonalData
 from apps.users.serializes import UserSerializer
 from backend import settings
 from utils.FileTools import fileVerify
-from utils.utils import get, json_response, post, jwt_authentication, create_jwt
+from utils.utils import get, json_response, post, jwt_authentication, create_jwt, put
 
 
 def simple_view(request, *args, **kwargs):
@@ -67,7 +67,20 @@ class UsersView():
         userProfile = PersonalData.objects.get(id=user.id)
         user_profile_data = model_to_dict(userProfile, exclude=['user', 'id'])
         return json_response(message='用户信息获取成功', code=200, data=user_profile_data)
-
+    @put
+    @jwt_authentication
+    def updateUserProfile(request, *args, **kwargs):
+        try:
+            data = request.data;
+            user = request.user
+            personal_data = PersonalData.objects.get(user=user)
+            UserSerializer.update_validate(personal_data,data);
+            personal_data.save()
+            return json_response(code=200, data=data,message='修改成功')
+        except PersonalData.DoesNotExist:
+            return json_response(code=404, message= '用户资料不存在')
+        except Exception as e:
+            return json_response(code= 500, message= f'服务器内部错误: {str(e)}')
     @get
     @jwt_authentication
     def fetch_github_repos(request, *args, **kwargs):

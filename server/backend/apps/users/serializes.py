@@ -63,3 +63,25 @@ class UserSerializer:
             'email': email,
             'mobile': mobile
         }
+
+    @staticmethod
+    def update_validate(personal_data,data):
+        # 更新个人资料字段
+        personal_data.school = data.get('school', personal_data.school)
+        personal_data.address = data.get('address', personal_data.address)
+        personal_data.city = data.get('city', personal_data.city)
+        personal_data.state = data.get('state', personal_data.state)
+        personal_data.zip = data.get('zip', personal_data.zip)
+        personal_data.age = data.get('age', personal_data.age)
+        personal_data.hobbies = data.get('hobbies', personal_data.hobbies)
+        personal_data.linkedin = data.get('linkedin', personal_data.linkedin)
+        personal_data.github = data.get('github', personal_data.github)
+        personal_data.degree = data.get('degree', personal_data.degree)
+        personal_data.major = data.get('major', personal_data.major)
+        personal_data.graduation_year = data.get('graduation_year', personal_data.graduation_year)
+        personal_data.company_name = data.get('company_name', personal_data.company_name)
+        personal_data.job_title = data.get('job_title', personal_data.job_title)
+        personal_data.job_description = data.get('job_description', personal_data.job_description)
+        personal_data.skills = data.get('skills', personal_data.skills)
+        personal_data.certificates = data.get('certificates', personal_data.certificates)
+        personal_data.languages = data.get('languages', personal_data.languages)
